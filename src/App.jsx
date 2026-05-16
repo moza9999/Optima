@@ -458,43 +458,33 @@ export default function App() {
     setStudents(updatedStudents);
   };
 
+  // تم تقليص التفاصيل وإزالة الأيقونات وشريط التقدم والعنوان، مع التلوين بالتناوب للأسطر
   const ProgressDetails = ({ student, isPodium = false }) => {
     if (!student || student.isTie || student.isEmpty) return null;
     return (
-      <div className={`p-4 bg-purple-50/50 ${isPodium ? 'rounded-2xl shadow-sm border border-purple-100 mt-2' : 'border-t border-gray-100'}`}>
-        <h4 className="text-xs font-bold text-purple-400 mb-4 text-center uppercase tracking-wider">
-          Progression • {student.name}
-        </h4>
-        <div className="space-y-4">
-          {LESSONS.map((lesson) => {
+      <div className={`${isPodium ? 'bg-white rounded-2xl border border-purple-100 shadow-[0_15px_40px_rgba(147,51,234,0.15)] mt-2 overflow-hidden' : 'border-t border-gray-100 overflow-hidden rounded-b-2xl'}`}>
+        <div className="flex flex-col">
+          {LESSONS.map((lesson, index) => {
             const completed = student.progress[lesson.id] || 0;
-            const percentage = (completed / lesson.total) * 100;
             const isFinished = completed === lesson.total;
+            // تلوين الأسطر بالتناوب (رمادي فاتح ثم أبيض)
+            const bgClass = index % 2 === 0 ? 'bg-gray-50' : 'bg-white';
 
             return (
-              <div key={lesson.id} className="text-sm relative">
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-gray-700 flex items-center font-medium text-xs">
-                    <span className="mr-2 text-base bg-white p-1 rounded shadow-sm">{lesson.icon}</span> 
-                    {lesson.name}
+              <div key={lesson.id} className={`flex justify-between items-center px-4 py-2 ${bgClass}`}>
+                <span className="text-gray-600 font-medium text-[11px] truncate mr-2">
+                  {lesson.name}
+                </span>
+                <div className="flex items-center shrink-0 min-w-[40px] justify-end">
+                  <span 
+                    className={`text-[11px] font-bold ${getScoreColorText((completed / lesson.total) * 94)}`}
+                    style={{ fontFamily: "'Lato', sans-serif" }}
+                  >
+                    {completed}/{lesson.total}
                   </span>
-                  <div className="flex items-center">
-                    <span 
-                      className={`text-xs mr-1 ${getScoreColorText((completed / lesson.total) * 94)}`}
-                      style={{ fontFamily: "'Lato', sans-serif", fontWeight: 500 }}
-                    >
-                      {completed}/{lesson.total}
-                    </span>
-                    <div className={`transition-all duration-500 ease-out ${isFinished ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-0 -rotate-90'}`}>
-                      <i className="fa-solid fa-star text-yellow-400 text-lg ml-1"></i>
-                    </div>
+                  <div className={`w-3 flex justify-end transition-opacity duration-300 ${isFinished ? 'opacity-100' : 'opacity-0'}`}>
+                    <i className="fa-solid fa-star text-yellow-400 text-[9px]"></i>
                   </div>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden flex justify-start">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-1000 ease-out ${getProgressBarColor(percentage)}`} 
-                    style={{ width: `${percentage}%` }}
-                  ></div>
                 </div>
               </div>
             );
@@ -551,7 +541,6 @@ export default function App() {
           </div>
         )}
 
-        {/* الهيدر الخاص بالإدارة - تم تعديل الحواف لتتطابق تماما مع اللائحة */}
         <div className="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-100">
           <div className="max-w-md mx-auto px-4 py-5">
             <h1 className="text-xl font-black text-purple-600 flex items-center gap-2 mb-4">
@@ -871,15 +860,16 @@ export default function App() {
       {/* الحاوية الثابتة بحجم الشاشة الكامل لمنع الانزلاق والتداخل */}
       <div className="sticky top-0 h-[100dvh] flex flex-col max-w-md mx-auto z-30">
         
-        {/* قسم المنصة: تم تغيير pt-6 إلى pt-3 لتوحيد المسافة العلوية والسفلية (12px) */}
-        <div className="shrink-0 pt-3 pb-3 bg-purple-50 px-4">
-          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+        {/* قسم المنصة: تم تغيير الارتفاع وتغليف القوائم وجعلها عائمة Absolute */}
+        <div className="shrink-0 pt-3 pb-3 bg-purple-50 px-4 relative z-40">
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100 relative">
             {podiumSpots.length > 0 && (
               <>
-                <div className="flex justify-center items-end h-[300px] pt-16 relative">
+                {/* رفعنا ارتفاع المنصة لـ 330px ليأخذ الكأس راحته ولا يصطدم بالعداد الصغير */}
+                <div className="flex justify-center items-end h-[330px] pt-12 relative">
                   
-                  {/* العداد المصغر */}
-                  <div className={`absolute top-2 left-1/2 -translate-x-1/2 text-purple-600 px-4 py-1.5 rounded-full text-sm font-black flex items-center justify-center gap-3 whitespace-nowrap z-20 transition-all duration-300 ${isSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                  {/* العداد المصغر رفعناه للأعلى top-0 وأصبح هناك مسافة ممتازة مع الكأس */}
+                  <div className={`absolute top-0 left-1/2 -translate-x-1/2 text-purple-600 px-4 py-1.5 rounded-full text-sm font-black flex items-center justify-center gap-3 whitespace-nowrap z-20 transition-all duration-300 ${isSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
                     <span>{timeLeft.days} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Jrs</span></span>
                     <span className="text-purple-300">•</span>
                     <span>{timeLeft.hours.toString().padStart(2,'0')} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Hrs</span></span>
@@ -899,36 +889,42 @@ export default function App() {
                       {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? <PodiumMedal rank={podiumSpots[1].rank} defaultIcon="fa-solid fa-medal text-2xl text-slate-400" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
                     </div>
                     <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[1].name)}</div>
-                    {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? (
-                      <>
-                        <div className="flex items-center gap-1 mb-1 mt-1">
+                  {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? (
+                    <>
+                      {/* السطر الأول: النجمة + الأوسمة على يمينها */}
+                      <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
+                        <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
                             {calculateCompletedLessons(podiumSpots[1].progress)}
                           </span>
-                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                          <i className="fa-solid fa-star text-yellow-400 text-[10px]"></i>
                         </div>
-                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <div className="flex items-center gap-1">
                           {podiumSpots[1].fireBadgeUntil && podiumSpots[1].fireBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '11px' }}></i>
                           )}
                           {podiumSpots[1].lightningBadgeUntil && podiumSpots[1].lightningBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '11px' }}></i>
                           )}
-                          <span 
-                            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[1].progress))}`}
-                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                          >
-                            {calculateTotal(podiumSpots[1].progress)}/94
-                          </span>
-                          {podiumSpots[1].recentProgress ? (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                              {podiumSpots[1].recentProgress > 0 ? '+' : ''}{podiumSpots[1].recentProgress}
-                            </div>
-                          ) : null}
                         </div>
-                      </>
-                    ) : <div className="h-[46px] w-full"></div>}
-                    <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
+                      </div>
+                      {/* السطر الثاني: المجموع الكلي والتطور */}
+                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <span 
+                          className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[1].progress))}`}
+                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                        >
+                          {calculateTotal(podiumSpots[1].progress)}/94
+                        </span>
+                        {podiumSpots[1].recentProgress ? (
+                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                            {podiumSpots[1].recentProgress > 0 ? '+' : ''}{podiumSpots[1].recentProgress}
+                          </div>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : <div className="h-[46px] w-full"></div>}
+                  <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
                       <div className="flex items-center gap-1 z-10">
                         <span>{podiumSpots[1].rank}</span>
                         {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
@@ -949,36 +945,42 @@ export default function App() {
                       {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? <PodiumMedal rank={podiumSpots[0].rank} defaultIcon="fa-solid fa-trophy text-3xl text-yellow-500" /> : <i className="fa-solid fa-trophy text-3xl text-purple-200/50 drop-shadow-sm"></i>}
                     </div>
                     <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[0].name)}</div>
-                    {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? (
-                      <>
-                        <div className="flex items-center gap-1 mb-1 mt-1">
+                  {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? (
+                    <>
+                      {/* السطر الأول: النجمة + الأوسمة على يمينها */}
+                      <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
+                        <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
                             {calculateCompletedLessons(podiumSpots[0].progress)}
                           </span>
-                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                          <i className="fa-solid fa-star text-yellow-400 text-[11px]"></i>
                         </div>
-                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <div className="flex items-center gap-1">
                           {podiumSpots[0].fireBadgeUntil && podiumSpots[0].fireBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '13px' }}></i>
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
                           )}
                           {podiumSpots[0].lightningBadgeUntil && podiumSpots[0].lightningBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '13px' }}></i>
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
                           )}
-                          <span 
-                            className={`text-xs px-3 py-1 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[0].progress))}`}
-                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                          >
-                            {calculateTotal(podiumSpots[0].progress)}/94
-                          </span>
-                          {podiumSpots[0].recentProgress ? (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                              {podiumSpots[0].recentProgress > 0 ? '+' : ''}{podiumSpots[0].recentProgress}
-                            </div>
-                          ) : null}
                         </div>
-                      </>
-                    ) : <div className="h-[46px] w-full"></div>}
-                    <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
+                      </div>
+                      {/* السطر الثاني: المجموع الكلي والتطور */}
+                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <span 
+                          className={`text-xs px-3 py-1 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[0].progress))}`}
+                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                        >
+                          {calculateTotal(podiumSpots[0].progress)}/94
+                        </span>
+                        {podiumSpots[0].recentProgress ? (
+                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                            {podiumSpots[0].recentProgress > 0 ? '+' : ''}{podiumSpots[0].recentProgress}
+                          </div>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : <div className="h-[46px] w-full"></div>}
+                  <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
                       <div className="flex items-center gap-1 z-10">
                         <span>{podiumSpots[0].rank}</span>
                         {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
@@ -999,36 +1001,42 @@ export default function App() {
                       {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? <PodiumMedal rank={podiumSpots[2].rank} defaultIcon="fa-solid fa-medal text-2xl text-amber-600" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
                     </div>
                     <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[2].name)}</div>
-                    {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? (
-                      <>
-                        <div className="flex items-center gap-1 mb-1 mt-1">
+                  {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? (
+                    <>
+                      {/* السطر الأول: النجمة + الأوسمة على يمينها */}
+                      <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
+                        <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
                             {calculateCompletedLessons(podiumSpots[2].progress)}
                           </span>
-                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                          <i className="fa-solid fa-star text-yellow-400 text-[10px]"></i>
                         </div>
-                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <div className="flex items-center gap-1">
                           {podiumSpots[2].fireBadgeUntil && podiumSpots[2].fireBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '11px' }}></i>
                           )}
                           {podiumSpots[2].lightningBadgeUntil && podiumSpots[2].lightningBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '11px' }}></i>
                           )}
-                          <span 
-                            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[2].progress))}`}
-                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                          >
-                            {calculateTotal(podiumSpots[2].progress)}/94
-                          </span>
-                          {podiumSpots[2].recentProgress ? (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                              {podiumSpots[2].recentProgress > 0 ? '+' : ''}{podiumSpots[2].recentProgress}
-                            </div>
-                          ) : null}
                         </div>
-                      </>
-                    ) : <div className="h-[46px] w-full"></div>}
-                    <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
+                      </div>
+                      {/* السطر الثاني: المجموع الكلي والتطور */}
+                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                        <span 
+                          className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[2].progress))}`}
+                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                        >
+                          {calculateTotal(podiumSpots[2].progress)}/94
+                        </span>
+                        {podiumSpots[2].recentProgress ? (
+                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                            {podiumSpots[2].recentProgress > 0 ? '+' : ''}{podiumSpots[2].recentProgress}
+                          </div>
+                        ) : null}
+                      </div>
+                    </>
+                  ) : <div className="h-[46px] w-full"></div>}
+                  <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
                       <div className="flex items-center gap-1 z-10">
                         <span>{podiumSpots[2].rank}</span>
                         {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
@@ -1040,11 +1048,12 @@ export default function App() {
                   )}
                 </div>
 
-                <div className="w-full">
+                {/* الحاوية العائمة Absolute لتفاصيل المنصة (لكي لا تدفع البطاقة السفلية) */}
+                <div className="w-full relative z-50">
                   {podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(student => (
                     <div 
                       key={`podium-${student.id}`} 
-                      className={`grid transition-[grid-template-rows,opacity,margin] duration-300 ease-in-out ${expandedId === student.id ? 'grid-rows-[1fr] opacity-100 mb-2' : 'grid-rows-[0fr] opacity-0 mb-0'}`}
+                      className={`absolute top-0 left-0 w-full grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${expandedId === student.id ? 'grid-rows-[1fr] opacity-100 pointer-events-auto' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}
                     >
                       <div className="overflow-hidden">
                         <ProgressDetails student={student} isPodium={true} />
@@ -1052,6 +1061,7 @@ export default function App() {
                     </div>
                   ))}
                 </div>
+
               </>
             )}
           </div>
@@ -1059,7 +1069,6 @@ export default function App() {
 
         {/* قسم لائحة التلاميذ: مرن (flex-1) ويستخدم overflow-hidden لاحتواء السكرول */}
         <div className="flex-1 flex flex-col px-4 pb-4 min-h-0 bg-purple-50">
-          {/* تغيير pt-4 إلى py-4 لجعل الهامش الأبيض ثابتاً في الأعلى والأسفل معاً */}
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 py-4 flex-1 flex flex-col min-h-0 overflow-hidden">
             <div 
               className="flex-1 overflow-y-auto px-4 no-scrollbar smooth-scroll"
@@ -1071,6 +1080,11 @@ export default function App() {
                 const completedLessonsCount = calculateCompletedLessons(student.progress);
                 const isZero = total === 0;
 
+                const nowTime = Date.now();
+                const hasFire = student.fireBadgeUntil && student.fireBadgeUntil > nowTime;
+                const hasLightning = student.lightningBadgeUntil && student.lightningBadgeUntil > nowTime;
+                const hasBoth = hasFire && hasLightning;
+
                 let rankBadgeColor = 'bg-gray-50 border-gray-200 text-gray-700'; 
                 if (student.trend > 0) {
                   rankBadgeColor = 'bg-green-100 border-green-200 text-green-700'; 
@@ -1080,74 +1094,95 @@ export default function App() {
                   rankBadgeColor = 'bg-gray-100 border-red-200 text-red-400';
                 }
 
-                const cardStyle = isZero 
-                  ? "mb-3 rounded-2xl overflow-hidden transition-all duration-300 bg-gray-50 border border-red-200 opacity-95" 
-                  : "mb-3 rounded-2xl overflow-hidden transition-all duration-300 bg-white border border-gray-100 hover:border-purple-200";
+                // برمجة ذكية لدمج الإطار المتدرج دون تخريب الخلفيات
+                let wrapperClass = "mb-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md ";
+                let innerClass = "rounded-2xl overflow-hidden bg-white ";
+
+                if (hasBoth) {
+                  wrapperClass += "p-[2px] bg-gradient-to-r from-red-500 via-purple-500 to-red-500 animate-gradient-x";
+                } else if (hasFire) {
+                  wrapperClass += "p-[2px] bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 animate-gradient-x";
+                } else if (hasLightning) {
+                  wrapperClass += "p-[2px] bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-500 animate-gradient-x";
+                } else {
+                  wrapperClass += "border " + (isZero ? "border-red-200 opacity-95 bg-gray-50" : "border-gray-100 hover:border-purple-200 bg-white");
+                  if (isZero) innerClass = "rounded-2xl overflow-hidden bg-gray-50 ";
+                }
+
+                // تلوين الاسم بنفس التدرج مع تحريكه
+                const nameClass = `font-bold text-sm pb-0.5 ${
+                  hasBoth ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-500 to-red-500 animate-gradient-x' :
+                  hasFire ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 animate-gradient-x' :
+                  hasLightning ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-500 animate-gradient-x' :
+                  isZero ? 'text-gray-400' : 'text-gray-800'
+                }`;
 
                 return (
-                  <div key={student.id} className={cardStyle}>
-                    <div 
-                      className="flex items-center justify-between p-3 cursor-pointer active:bg-gray-50"
-                      onClick={() => setExpandedId(isExpanded ? null : student.id)}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                          {student.rank}
-                        </div>
-                        <div>
-                          <h3 className={`font-bold text-sm ${isZero ? 'text-gray-400' : 'text-gray-800'}`}>{student.name}</h3>
-                          
-                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                            {student.trend > 0 && (
-                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-bold">
-                                <span style={{ fontFamily: "'Lato', sans-serif" }}>{student.trend}</span> <i className="fa-solid fa-caret-up text-[10px]"></i>
-                              </div>
-                            )}
-                            {student.trend < 0 && (
-                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-red-100 text-red-600 rounded-md text-[10px] font-bold">
-                                <span style={{ fontFamily: "'Lato', sans-serif" }}>{Math.abs(student.trend)}</span> <i className="fa-solid fa-caret-down text-[10px]"></i>
-                              </div>
-                            )}
-                            {student.trend === 0 && (
-                              <div className="flex items-center justify-center px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md text-[10px] font-bold">
-                                -
-                              </div>
-                            )}
+                  <div key={student.id} className={wrapperClass}>
+                    <div className={innerClass}>
+                      <div 
+                        className="flex items-center justify-between p-3 cursor-pointer active:bg-gray-50"
+                        onClick={() => setExpandedId(isExpanded ? null : student.id)}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors shrink-0 ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                            {student.rank}
+                          </div>
+                          <div>
+                            <h3 className={nameClass}>{student.name}</h3>
+                            
+                            <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                              {student.trend > 0 && (
+                                <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-bold">
+                                  <span style={{ fontFamily: "'Lato', sans-serif" }}>{student.trend}</span> <i className="fa-solid fa-caret-up text-[10px]"></i>
+                                </div>
+                              )}
+                              {student.trend < 0 && (
+                                <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-red-100 text-red-600 rounded-md text-[10px] font-bold">
+                                  <span style={{ fontFamily: "'Lato', sans-serif" }}>{Math.abs(student.trend)}</span> <i className="fa-solid fa-caret-down text-[10px]"></i>
+                                </div>
+                              )}
+                              {student.trend === 0 && (
+                                <div className="flex items-center justify-center px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md text-[10px] font-bold">
+                                  -
+                                </div>
+                              )}
 
-                            <div className={`flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${completedLessonsCount > 0 ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'}`}>
-                              <span style={{ fontFamily: "'Lato', sans-serif" }}>{completedLessonsCount}</span> <i className="fa-solid fa-star text-[9px]"></i>
+                              <div className={`flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${completedLessonsCount > 0 ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'}`}>
+                                <span style={{ fontFamily: "'Lato', sans-serif" }}>{completedLessonsCount}</span> <i className="fa-solid fa-star text-[9px]"></i>
+                              </div>
+
+                              {student.recentProgress ? (
+                                <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+                                  {student.recentProgress > 0 ? '+' : ''}{student.recentProgress}
+                                </div>
+                              ) : null}
                             </div>
-
-                            {student.recentProgress ? (
-                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
-                                {student.recentProgress > 0 ? '+' : ''}{student.recentProgress}
-                              </div>
-                            ) : null}
+                          </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5 mr-1 shrink-0">
+                            {hasFire && (
+                              <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '14px' }} title="Avancé de plus de 5 rangs !"></i>
+                            )}
+                            {hasLightning && (
+                              <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '14px' }} title="10 exercices ou plus complétés !"></i>
+                            )}
+                          </div>
+                          <div className={`text-xs font-bold px-2.5 py-1.5 rounded-lg shrink-0 ${getScoreColorBadge(total)}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                            {total}/94
+                          </div>
+                          <div className="text-gray-400 flex items-center justify-center w-6 h-6 shrink-0">
+                            <i className={`fa-solid fa-chevron-down text-sm transition-transform duration-300 ${isExpanded ? 'rotate-180 text-purple-500' : ''}`}></i>
                           </div>
                         </div>
                       </div>
-                      
-                      <div className="flex items-center gap-2">
-                        <div className="flex items-center gap-1.5 mr-1">
-                          {student.fireBadgeUntil && student.fireBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '14px' }} title="Avancé de plus de 5 rangs !"></i>
-                          )}
-                          {student.lightningBadgeUntil && student.lightningBadgeUntil > Date.now() && (
-                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '14px' }} title="10 exercices ou plus complétés !"></i>
-                          )}
-                        </div>
-                        <div className={`text-xs font-bold px-2.5 py-1.5 rounded-lg ${getScoreColorBadge(total)}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                          {total}/94
-                        </div>
-                        <div className="text-gray-400 flex items-center justify-center w-6 h-6">
-                          <i className={`fa-solid fa-chevron-down text-sm transition-transform duration-300 ${isExpanded ? 'rotate-180 text-purple-500' : ''}`}></i>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                      <div className="overflow-hidden">
-                        <ProgressDetails student={student} isPodium={false} />
+                      <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                        <div className="overflow-hidden">
+                          <ProgressDetails student={student} isPodium={false} />
+                        </div>
                       </div>
                     </div>
                   </div>
