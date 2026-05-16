@@ -148,7 +148,7 @@ const PodiumMedal = ({ rank, defaultIcon }) => {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true); // حالة تحميل التطبيق
+  const [isLoading, setIsLoading] = useState(true); 
   const [students, setStudents] = useState(INITIAL_STUDENTS);
   const [user, setUser] = useState(null);
   
@@ -167,10 +167,51 @@ export default function App() {
   const [adminSortScores, setAdminSortScores] = useState({}); 
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [isSticky, setIsSticky] = useState(false);
+  
+  // حالة نافذة التأكيد قبل الإلغاء
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  
+  // تغيير المرجع ليراقب الهيدر بالكامل بدلا من نقطة مخفية
+  const headerRef = useRef(null);
+
   const isAdminRef = useRef(isAdmin);
   useEffect(() => {
     isAdminRef.current = isAdmin;
   }, [isAdmin]);
+
+  // مراقب التمرير لمعرفة متى تصبح المنصة ثابتة في الأعلى
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        // إذا اختفى الهيدر بالكامل للأعلى، أظهر العداد الصغير (isSticky = true)
+        setIsSticky(!entry.isIntersecting);
+      },
+      { threshold: 0 } // يعمل بمجرد أن يلمس الهيدر حافة الشاشة
+    );
+
+    if (headerRef.current) {
+      observer.observe(headerRef.current);
+    }
+
+    return () => {
+      if (headerRef.current) observer.unobserve(headerRef.current);
+    };
+  }, []);
+
+  // دالة التعامل مع التمرير الداخلي للائحة التلاميذ بطريقة تمنع التقطيع
+  const handleListScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.target;
+    if (scrollHeight - scrollTop - clientHeight < 250) {
+      setVisibleCount(prev => {
+        if (prev < students.length) {
+          return prev + 10;
+        }
+        return prev;
+      });
+    }
+  };
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
@@ -224,7 +265,6 @@ export default function App() {
 
   useEffect(() => {
     if (!user || !db) return;
-    // قمنا بتغيير v1 إلى v2 لإنشاء قاعدة بيانات جديدة ونظيفة
     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -236,7 +276,6 @@ export default function App() {
           setDoc(docRef, { students: INITIAL_STUDENTS }).catch(console.error);
         }
       }
-      // إزالة شاشة التحميل بعد التأكد من جلب البيانات وتأخيرها لثانيتين (2000ms) حتى يأخذ التصميم مكانه
       setTimeout(() => setIsLoading(false), 2000);
     }, (error) => {
       console.error("Firestore Error:", error);
@@ -260,7 +299,6 @@ export default function App() {
     });
   }, [students]);
 
-  // منطق كسر التعادل في المنصة (Non défini)
   const podiumSpots = useMemo(() => {
     return [1, 2, 3].map(r => {
       const atRank = rankedStudents.filter(s => s.rank === r);
@@ -271,7 +309,7 @@ export default function App() {
           isTie: true,
           name: 'Non défini',
           rank: r,
-          progress: atRank[0].progress, // إظهار النقاط التي حدث فيها التعادل
+          progress: atRank[0].progress, 
           trend: 0,
           recentProgress: 0
         };
@@ -288,7 +326,6 @@ export default function App() {
     });
   }, [rankedStudents]);
 
-  // التلاميذ الذين سيظهرون في اللائحة السفلية (يتضمنون المتعادلين المبعدين من المنصة)
   const podiumStudentsIds = podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(s => s.id);
   const others = rankedStudents.filter(s => !podiumStudentsIds.includes(s.id));
 
@@ -302,7 +339,8 @@ export default function App() {
       if (totalA !== totalB) {
         return adminSortDesc ? totalB - totalA : totalA - totalB;
       }
-      return a.name.localeCompare(b.name);
+      // استخدام معرف التلميذ كفيصل نهائي لتفادي القفز العشوائي عند تعديل الأسماء
+      return a.id - b.id;
     });
   }, [rankedStudents, searchQuery, adminSortDesc, adminSortScores]);
 
@@ -370,7 +408,6 @@ export default function App() {
     setStudents(updatedStudents);
 
     if (user && db) {
-      // قمنا بتغيير v1 إلى v2 هنا أيضاً لحفظ البيانات في المكان الجديد
       const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
       try {
         await setDoc(docRef, { students: updatedStudents });
@@ -381,11 +418,14 @@ export default function App() {
     setIsAdmin(false);
   };
 
-  const handleCancelAdmin = () => {
-    if (window.confirm("Êtes-vous sûr de vouloir annuler sans sauvegarder les modifications ?")) {
-      setStudents(initialAdminStudents);
-      setIsAdmin(false);
-    }
+  const handleCancelClick = () => {
+    setShowCancelConfirm(true); // إظهار نافذة التأكيد
+  };
+
+  const confirmCancel = () => {
+    setStudents(initialAdminStudents);
+    setIsAdmin(false);
+    setShowCancelConfirm(false); // إغلاق النافذة والعودة
   };
 
   const updateProgress = (studentId, lessonId, newValue, max) => {
@@ -421,7 +461,7 @@ export default function App() {
   const ProgressDetails = ({ student, isPodium = false }) => {
     if (!student || student.isTie || student.isEmpty) return null;
     return (
-      <div className={`p-4 bg-purple-50/50 ${isPodium ? 'rounded-2xl shadow-sm border border-purple-100' : 'border-t border-gray-100'}`}>
+      <div className={`p-4 bg-purple-50/50 ${isPodium ? 'rounded-2xl shadow-sm border border-purple-100 mt-2' : 'border-t border-gray-100'}`}>
         <h4 className="text-xs font-bold text-purple-400 mb-4 text-center uppercase tracking-wider">
           Progression • {student.name}
         </h4>
@@ -464,18 +504,9 @@ export default function App() {
     );
   };
 
-  // شاشة التحميل بخلفية متناسقة مع الصورة
-  if (isLoading) {
-    return (
-      <div dir="ltr" className="min-h-screen bg-[#fafafa] flex flex-col items-center justify-center">
-        <img src="https://i.pinimg.com/originals/54/58/a1/5458a14ae4c8f07055b7441ff0f234cf.gif" alt="Chargement..." className="w-32 h-32 object-contain" />
-      </div>
-    );
-  }
-
   if (isAdmin) {
     return (
-      <div dir="ltr" className="min-h-screen bg-gray-50 text-gray-800 pb-10" style={{ fontFamily: "'Poppins', sans-serif", opacity: 0, animation: "fadeIn 1s forwards" }}>
+      <div dir="ltr" className="min-h-screen bg-gray-50 text-gray-800 pb-10 relative" style={{ fontFamily: "'Poppins', sans-serif", opacity: 0, animation: "fadeIn 1s forwards" }}>
         <style>{`
           @keyframes fadeIn { to { opacity: 1; } }
           @keyframes shine-text {
@@ -493,15 +524,43 @@ export default function App() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        <div className="bg-white px-4 py-5 shadow-sm sticky top-0 z-20 border-b border-gray-100">
-          <div className="max-w-md mx-auto">
+        {/* نافذة تأكيد الإلغاء (Modal) */}
+        {showCancelConfirm && (
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
+            <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-500">
+                <i className="fa-solid fa-triangle-exclamation text-xl"></i>
+              </div>
+              <h2 className="text-lg font-bold text-gray-800 mb-2">Annuler les modifications ?</h2>
+              <p className="text-xs text-gray-500 mb-6">Toutes les modifications non enregistrées seront perdues.</p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowCancelConfirm(false)}
+                  className="flex-1 bg-gray-100 text-gray-600 font-bold py-3 rounded-xl hover:bg-gray-200 transition-colors"
+                >
+                  Non, continuer
+                </button>
+                <button
+                  onClick={confirmCancel}
+                  className="flex-1 bg-red-500 text-white font-bold py-3 rounded-xl hover:bg-red-600 transition-colors shadow-sm shadow-red-200"
+                >
+                  Oui, annuler
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* الهيدر الخاص بالإدارة - تم تعديل الحواف لتتطابق تماما مع اللائحة */}
+        <div className="bg-white shadow-sm sticky top-0 z-20 border-b border-gray-100">
+          <div className="max-w-md mx-auto px-4 py-5">
             <h1 className="text-xl font-black text-purple-600 flex items-center gap-2 mb-4">
               <i className="fa-solid fa-user-shield"></i> Espace Professeur
             </h1>
             
             <div className="flex gap-3 mb-5">
               <button 
-                onClick={handleCancelAdmin}
+                onClick={handleCancelClick}
                 className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-3.5 rounded-2xl text-sm font-bold transition-colors flex justify-center items-center gap-2"
                 title="Annuler les modifications"
               >
@@ -671,9 +730,8 @@ export default function App() {
   }
 
   return (
-    <div dir="ltr" className="min-h-screen bg-purple-50/50 text-gray-800 pb-10 relative" style={{ fontFamily: "'Poppins', sans-serif", opacity: 0, animation: "fadeIn 1s forwards" }}>
+    <div dir="ltr" className="min-h-screen bg-purple-50 text-gray-800 relative" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <style>{`
-        @keyframes fadeIn { to { opacity: 1; } }
         @keyframes shine-text {
           0% { background-position: -100% center; }
           100% { background-position: 200% center; }
@@ -685,10 +743,27 @@ export default function App() {
           -webkit-text-fill-color: transparent;
           animation: shine-text 3s linear infinite;
         }
+        /* إخفاء شريط التمرير كلياً لجعل التصميم نظيفاً */
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        /* إضافة نعومة إضافية للسكرول الداخلي على هواتف iOS */
+        .smooth-scroll {
+          -webkit-overflow-scrolling: touch;
+        }
       `}</style>
+      
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
       
+      <div className={`fixed inset-0 z-[100] bg-[#fafafa] flex flex-col items-center justify-center transition-opacity duration-700 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <img src="https://i.pinimg.com/originals/54/58/a1/5458a14ae4c8f07055b7441ff0f234cf.gif" alt="Chargement..." className="w-32 h-32 object-contain" />
+      </div>
+
       <a 
         href="https://drive.google.com/file/d/12D8ImLEhlVuzSV25-1fH9z7sfEsYn0ps/view?usp=sharing" 
         target="_blank"
@@ -743,9 +818,10 @@ export default function App() {
         </div>
       )}
 
-      <div className="max-w-md mx-auto px-4 pt-10 pb-2">
+      {/* تم ربط المراقبة (ref) بالهيدر وتقليص الهامش السفلي pb-0 لتوحيد المسافة */}
+      <div ref={headerRef} className="max-w-md mx-auto px-4 pt-8 pb-0">
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-          <div className="flex flex-col items-center justify-center text-center mb-6">
+          <div className="flex flex-col items-center justify-center text-center mb-4">
             <h1 className="text-6xl font-normal text-purple-600 tracking-widest drop-shadow-sm" style={{ fontFamily: "'Bitcount', 'Bebas Neue', sans-serif" }}>
               OPTIMA
             </h1>
@@ -792,266 +868,292 @@ export default function App() {
         </div>
       </div>
 
-      <div className="max-w-md mx-auto px-4 pt-2">
-        <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
-          {podiumSpots.length > 0 && (
-            <>
-              <div className="flex justify-center items-end h-72 mb-6 gap-2 pt-8">
-                {/* Rang 2 */}
-                {podiumSpots[1] && (
-                <div 
-                  className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[1].id ? 'scale-105' : ''}`}
-                  onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) setExpandedId(expandedId === podiumSpots[1].id ? null : podiumSpots[1].id) }}
-                >
-                  <div className="mb-1">
-                    {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? <PodiumMedal rank={podiumSpots[1].rank} defaultIcon="fa-solid fa-medal text-2xl text-slate-400" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
+      {/* الحاوية الثابتة بحجم الشاشة الكامل لمنع الانزلاق والتداخل */}
+      <div className="sticky top-0 h-[100dvh] flex flex-col max-w-md mx-auto z-30">
+        
+        {/* قسم المنصة: تم تغيير pt-6 إلى pt-3 لتوحيد المسافة العلوية والسفلية (12px) */}
+        <div className="shrink-0 pt-3 pb-3 bg-purple-50 px-4">
+          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
+            {podiumSpots.length > 0 && (
+              <>
+                <div className="flex justify-center items-end h-[300px] pt-16 relative">
+                  
+                  {/* العداد المصغر */}
+                  <div className={`absolute top-2 left-1/2 -translate-x-1/2 text-purple-600 px-4 py-1.5 rounded-full text-sm font-black flex items-center justify-center gap-3 whitespace-nowrap z-20 transition-all duration-300 ${isSticky ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4 pointer-events-none'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                    <span>{timeLeft.days} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Jrs</span></span>
+                    <span className="text-purple-300">•</span>
+                    <span>{timeLeft.hours.toString().padStart(2,'0')} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Hrs</span></span>
+                    <span className="text-purple-300">•</span>
+                    <span>{timeLeft.minutes.toString().padStart(2,'0')} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Min</span></span>
+                    <span className="text-purple-300">•</span>
+                    <span>{timeLeft.seconds.toString().padStart(2,'0')} <span className="text-[10px] text-purple-400 uppercase ml-0.5">Sec</span></span>
                   </div>
-                  <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[1].name)}</div>
-                  {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? (
-                    <>
-                      <div className="flex items-center gap-1 mb-1 mt-1">
-                        <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
-                          {calculateCompletedLessons(podiumSpots[1].progress)}
-                        </span>
-                        <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                      </div>
-                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
-                        {podiumSpots[1].fireBadgeUntil && podiumSpots[1].fireBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
-                        )}
-                        {podiumSpots[1].lightningBadgeUntil && podiumSpots[1].lightningBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
-                        )}
-                        <span 
-                          className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[1].progress))}`}
-                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                        >
-                          {calculateTotal(podiumSpots[1].progress)}/94
-                        </span>
-                        {podiumSpots[1].recentProgress ? (
-                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                            {podiumSpots[1].recentProgress > 0 ? '+' : ''}{podiumSpots[1].recentProgress}
-                          </div>
-                        ) : null}
-                      </div>
-                    </>
-                  ) : <div className="h-[46px] w-full"></div>}
-                  <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
-                    <div className="flex items-center gap-1 z-10">
-                      <span>{podiumSpots[1].rank}</span>
-                      {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
-                      {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
-                    </div>
-                    <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
-                  </div>
-                </div>
-                )}
-                
-                {/* Rang 1 */}
-                {podiumSpots[0] && (
-                <div 
-                  className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 ${(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[0].id ? 'scale-105' : ''}`}
-                  onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) setExpandedId(expandedId === podiumSpots[0].id ? null : podiumSpots[0].id) }}
-                >
-                  <div className="mb-1">
-                    {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? <PodiumMedal rank={podiumSpots[0].rank} defaultIcon="fa-solid fa-trophy text-3xl text-yellow-500" /> : <i className="fa-solid fa-trophy text-3xl text-purple-200/50 drop-shadow-sm"></i>}
-                  </div>
-                  <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[0].name)}</div>
-                  {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? (
-                    <>
-                      <div className="flex items-center gap-1 mb-1 mt-1">
-                        <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
-                          {calculateCompletedLessons(podiumSpots[0].progress)}
-                        </span>
-                        <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                      </div>
-                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
-                        {podiumSpots[0].fireBadgeUntil && podiumSpots[0].fireBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '13px' }}></i>
-                        )}
-                        {podiumSpots[0].lightningBadgeUntil && podiumSpots[0].lightningBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '13px' }}></i>
-                        )}
-                        <span 
-                          className={`text-xs px-3 py-1 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[0].progress))}`}
-                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                        >
-                          {calculateTotal(podiumSpots[0].progress)}/94
-                        </span>
-                        {podiumSpots[0].recentProgress ? (
-                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                            {podiumSpots[0].recentProgress > 0 ? '+' : ''}{podiumSpots[0].recentProgress}
-                          </div>
-                        ) : null}
-                      </div>
-                    </>
-                  ) : <div className="h-[46px] w-full"></div>}
-                  <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
-                    <div className="flex items-center gap-1 z-10">
-                      <span>{podiumSpots[0].rank}</span>
-                      {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
-                      {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
-                    </div>
-                    <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
-                  </div>
-                </div>
-                )}
 
-                {/* Rang 3 */}
-                {podiumSpots[2] && (
-                <div 
-                  className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[2].id ? 'scale-105' : ''}`}
-                  onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) setExpandedId(expandedId === podiumSpots[2].id ? null : podiumSpots[2].id) }}
-                >
-                  <div className="mb-1">
-                    {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? <PodiumMedal rank={podiumSpots[2].rank} defaultIcon="fa-solid fa-medal text-2xl text-amber-600" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
-                  </div>
-                  <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[2].name)}</div>
-                  {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? (
-                    <>
-                      <div className="flex items-center gap-1 mb-1 mt-1">
-                        <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
-                          {calculateCompletedLessons(podiumSpots[2].progress)}
-                        </span>
-                        <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
-                      </div>
-                      <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
-                        {podiumSpots[2].fireBadgeUntil && podiumSpots[2].fireBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
-                        )}
-                        {podiumSpots[2].lightningBadgeUntil && podiumSpots[2].lightningBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
-                        )}
-                        <span 
-                          className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[2].progress))}`}
-                          style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
-                        >
-                          {calculateTotal(podiumSpots[2].progress)}/94
-                        </span>
-                        {podiumSpots[2].recentProgress ? (
-                          <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
-                            {podiumSpots[2].recentProgress > 0 ? '+' : ''}{podiumSpots[2].recentProgress}
-                          </div>
-                        ) : null}
-                      </div>
-                    </>
-                  ) : <div className="h-[46px] w-full"></div>}
-                  <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
-                    <div className="flex items-center gap-1 z-10">
-                      <span>{podiumSpots[2].rank}</span>
-                      {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
-                      {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend < 0 && <span className="text-[12px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
-                    </div>
-                    <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
-                  </div>
-                </div>
-                )}
-              </div>
-
-              <div className="w-full">
-                {podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(student => (
+                  {/* Rang 2 */}
+                  {podiumSpots[1] && (
                   <div 
-                    key={`podium-${student.id}`} 
-                    className={`grid transition-[grid-template-rows,opacity,margin] duration-300 ease-in-out ${expandedId === student.id ? 'grid-rows-[1fr] opacity-100 mb-6' : 'grid-rows-[0fr] opacity-0 mb-0'}`}
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[1].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) setExpandedId(expandedId === podiumSpots[1].id ? null : podiumSpots[1].id) }}
                   >
-                    <div className="overflow-hidden">
-                      <ProgressDetails student={student} isPodium={true} />
+                    <div className="mb-1">
+                      {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? <PodiumMedal rank={podiumSpots[1].rank} defaultIcon="fa-solid fa-medal text-2xl text-slate-400" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
                     </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          <div className="mt-2">
-            {others.map((student) => {
-              const total = calculateTotal(student.progress);
-              const isExpanded = expandedId === student.id;
-              const completedLessonsCount = calculateCompletedLessons(student.progress);
-              const isZero = total === 0;
-
-              let rankBadgeColor = 'bg-gray-50 border-gray-200 text-gray-700'; 
-              if (student.trend > 0) {
-                rankBadgeColor = 'bg-green-100 border-green-200 text-green-700'; 
-              } else if (student.trend < 0) {
-                rankBadgeColor = 'bg-red-100 border-red-200 text-red-700'; 
-              } else if (isZero) {
-                rankBadgeColor = 'bg-gray-100 border-red-200 text-red-400';
-              }
-
-              const cardStyle = isZero 
-                ? "mb-3 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm bg-gray-50 border border-red-300 opacity-95" 
-                : "mb-3 rounded-2xl overflow-hidden transition-all duration-300 shadow-sm hover:shadow-md bg-white border border-gray-200";
-
-              return (
-                <div key={student.id} className={cardStyle}>
-                  <div 
-                    className="flex items-center justify-between p-3 cursor-pointer active:bg-gray-50"
-                    onClick={() => setExpandedId(isExpanded ? null : student.id)}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                        {student.rank}
-                      </div>
-                      <div>
-                        <h3 className={`font-bold text-sm ${isZero ? 'text-gray-400' : 'text-gray-800'}`}>{student.name}</h3>
-                        
-                        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
-                          {student.trend > 0 && (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-bold">
-                              <span style={{ fontFamily: "'Lato', sans-serif" }}>{student.trend}</span> <i className="fa-solid fa-caret-up text-[10px]"></i>
-                            </div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[1].name)}</div>
+                    {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? (
+                      <>
+                        <div className="flex items-center gap-1 mb-1 mt-1">
+                          <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
+                            {calculateCompletedLessons(podiumSpots[1].progress)}
+                          </span>
+                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                        </div>
+                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                          {podiumSpots[1].fireBadgeUntil && podiumSpots[1].fireBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
                           )}
-                          {student.trend < 0 && (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-red-100 text-red-600 rounded-md text-[10px] font-bold">
-                              <span style={{ fontFamily: "'Lato', sans-serif" }}>{Math.abs(student.trend)}</span> <i className="fa-solid fa-caret-down text-[10px]"></i>
-                            </div>
+                          {podiumSpots[1].lightningBadgeUntil && podiumSpots[1].lightningBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
                           )}
-                          {student.trend === 0 && (
-                            <div className="flex items-center justify-center px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md text-[10px] font-bold">
-                              -
-                            </div>
-                          )}
-
-                          <div className={`flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${completedLessonsCount > 0 ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'}`}>
-                            <span style={{ fontFamily: "'Lato', sans-serif" }}>{completedLessonsCount}</span> <i className="fa-solid fa-star text-[9px]"></i>
-                          </div>
-
-                          {student.recentProgress ? (
-                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-md text-[10px] font-bold shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
-                              {student.recentProgress > 0 ? '+' : ''}{student.recentProgress}
+                          <span 
+                            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[1].progress))}`}
+                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                          >
+                            {calculateTotal(podiumSpots[1].progress)}/94
+                          </span>
+                          {podiumSpots[1].recentProgress ? (
+                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                              {podiumSpots[1].recentProgress > 0 ? '+' : ''}{podiumSpots[1].recentProgress}
                             </div>
                           ) : null}
                         </div>
+                      </>
+                    ) : <div className="h-[46px] w-full"></div>}
+                    <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
+                      <div className="flex items-center gap-1 z-10">
+                        <span>{podiumSpots[1].rank}</span>
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center gap-2">
-                      <div className="flex items-center gap-1.5 mr-1">
-                        {student.fireBadgeUntil && student.fireBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '14px' }} title="Avancé de plus de 5 rangs !"></i>
-                        )}
-                        {student.lightningBadgeUntil && student.lightningBadgeUntil > Date.now() && (
-                          <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '14px' }} title="10 exercices ou plus complétés !"></i>
-                        )}
-                      </div>
-                      <div className={`text-xs font-bold px-2.5 py-1.5 rounded-lg ${getScoreColorBadge(total)}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                        {total}/94
-                      </div>
-                      <div className="text-gray-400 flex items-center justify-center w-6 h-6">
-                        <i className={`fa-solid fa-chevron-down text-sm transition-transform duration-300 ${isExpanded ? 'rotate-180 text-purple-500' : ''}`}></i>
-                      </div>
+                      <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
                   </div>
+                  )}
+                  
+                  {/* Rang 1 */}
+                  {podiumSpots[0] && (
+                  <div 
+                    className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 mx-[-4px] ${(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[0].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) setExpandedId(expandedId === podiumSpots[0].id ? null : podiumSpots[0].id) }}
+                  >
+                    <div className="mb-1">
+                      {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? <PodiumMedal rank={podiumSpots[0].rank} defaultIcon="fa-solid fa-trophy text-3xl text-yellow-500" /> : <i className="fa-solid fa-trophy text-3xl text-purple-200/50 drop-shadow-sm"></i>}
+                    </div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[0].name)}</div>
+                    {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? (
+                      <>
+                        <div className="flex items-center gap-1 mb-1 mt-1">
+                          <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
+                            {calculateCompletedLessons(podiumSpots[0].progress)}
+                          </span>
+                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                        </div>
+                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                          {podiumSpots[0].fireBadgeUntil && podiumSpots[0].fireBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '13px' }}></i>
+                          )}
+                          {podiumSpots[0].lightningBadgeUntil && podiumSpots[0].lightningBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '13px' }}></i>
+                          )}
+                          <span 
+                            className={`text-xs px-3 py-1 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[0].progress))}`}
+                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                          >
+                            {calculateTotal(podiumSpots[0].progress)}/94
+                          </span>
+                          {podiumSpots[0].recentProgress ? (
+                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                              {podiumSpots[0].recentProgress > 0 ? '+' : ''}{podiumSpots[0].recentProgress}
+                            </div>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : <div className="h-[46px] w-full"></div>}
+                    <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
+                      <div className="flex items-center gap-1 z-10">
+                        <span>{podiumSpots[0].rank}</span>
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
+                      </div>
+                      <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
+                    </div>
+                  </div>
+                  )}
 
-                  <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
-                    <div className="overflow-hidden">
-                      <ProgressDetails student={student} isPodium={false} />
+                  {/* Rang 3 */}
+                  {podiumSpots[2] && (
+                  <div 
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[2].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) setExpandedId(expandedId === podiumSpots[2].id ? null : podiumSpots[2].id) }}
+                  >
+                    <div className="mb-1">
+                      {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? <PodiumMedal rank={podiumSpots[2].rank} defaultIcon="fa-solid fa-medal text-2xl text-amber-600" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
+                    </div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[2].name)}</div>
+                    {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? (
+                      <>
+                        <div className="flex items-center gap-1 mb-1 mt-1">
+                          <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>
+                            {calculateCompletedLessons(podiumSpots[2].progress)}
+                          </span>
+                          <i className="fa-solid fa-star text-yellow-400 text-xs"></i>
+                        </div>
+                        <div className="flex items-center justify-center gap-1.5 mb-2 w-full px-1">
+                          {podiumSpots[2].fireBadgeUntil && podiumSpots[2].fireBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>
+                          )}
+                          {podiumSpots[2].lightningBadgeUntil && podiumSpots[2].lightningBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '12px' }}></i>
+                          )}
+                          <span 
+                            className={`text-xs px-2 py-0.5 rounded-full shadow-sm ${getScoreColorBadge(calculateTotal(podiumSpots[2].progress))}`}
+                            style={{ fontFamily: "'Lato', sans-serif", fontWeight: 700 }}
+                          >
+                            {calculateTotal(podiumSpots[2].progress)}/94
+                          </span>
+                          {podiumSpots[2].recentProgress ? (
+                            <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm">
+                              {podiumSpots[2].recentProgress > 0 ? '+' : ''}{podiumSpots[2].recentProgress}
+                            </div>
+                          ) : null}
+                        </div>
+                      </>
+                    ) : <div className="h-[46px] w-full"></div>}
+                    <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
+                      <div className="flex items-center gap-1 z-10">
+                        <span>{podiumSpots[2].rank}</span>
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend < 0 && <span className="text-[12px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
+                      </div>
+                      <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
                   </div>
+                  )}
                 </div>
-              );
-            })}
+
+                <div className="w-full">
+                  {podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(student => (
+                    <div 
+                      key={`podium-${student.id}`} 
+                      className={`grid transition-[grid-template-rows,opacity,margin] duration-300 ease-in-out ${expandedId === student.id ? 'grid-rows-[1fr] opacity-100 mb-2' : 'grid-rows-[0fr] opacity-0 mb-0'}`}
+                    >
+                      <div className="overflow-hidden">
+                        <ProgressDetails student={student} isPodium={true} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* قسم لائحة التلاميذ: مرن (flex-1) ويستخدم overflow-hidden لاحتواء السكرول */}
+        <div className="flex-1 flex flex-col px-4 pb-4 min-h-0 bg-purple-50">
+          {/* تغيير pt-4 إلى py-4 لجعل الهامش الأبيض ثابتاً في الأعلى والأسفل معاً */}
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 py-4 flex-1 flex flex-col min-h-0 overflow-hidden">
+            <div 
+              className="flex-1 overflow-y-auto px-4 no-scrollbar smooth-scroll"
+              onScroll={handleListScroll}
+            >
+              {others.slice(0, visibleCount).map((student) => {
+                const total = calculateTotal(student.progress);
+                const isExpanded = expandedId === student.id;
+                const completedLessonsCount = calculateCompletedLessons(student.progress);
+                const isZero = total === 0;
+
+                let rankBadgeColor = 'bg-gray-50 border-gray-200 text-gray-700'; 
+                if (student.trend > 0) {
+                  rankBadgeColor = 'bg-green-100 border-green-200 text-green-700'; 
+                } else if (student.trend < 0) {
+                  rankBadgeColor = 'bg-red-100 border-red-200 text-red-700'; 
+                } else if (isZero) {
+                  rankBadgeColor = 'bg-gray-100 border-red-200 text-red-400';
+                }
+
+                const cardStyle = isZero 
+                  ? "mb-3 rounded-2xl overflow-hidden transition-all duration-300 bg-gray-50 border border-red-200 opacity-95" 
+                  : "mb-3 rounded-2xl overflow-hidden transition-all duration-300 bg-white border border-gray-100 hover:border-purple-200";
+
+                return (
+                  <div key={student.id} className={cardStyle}>
+                    <div 
+                      className="flex items-center justify-between p-3 cursor-pointer active:bg-gray-50"
+                      onClick={() => setExpandedId(isExpanded ? null : student.id)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                          {student.rank}
+                        </div>
+                        <div>
+                          <h3 className={`font-bold text-sm ${isZero ? 'text-gray-400' : 'text-gray-800'}`}>{student.name}</h3>
+                          
+                          <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+                            {student.trend > 0 && (
+                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-green-100 text-green-600 rounded-md text-[10px] font-bold">
+                                <span style={{ fontFamily: "'Lato', sans-serif" }}>{student.trend}</span> <i className="fa-solid fa-caret-up text-[10px]"></i>
+                              </div>
+                            )}
+                            {student.trend < 0 && (
+                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-red-100 text-red-600 rounded-md text-[10px] font-bold">
+                                <span style={{ fontFamily: "'Lato', sans-serif" }}>{Math.abs(student.trend)}</span> <i className="fa-solid fa-caret-down text-[10px]"></i>
+                              </div>
+                            )}
+                            {student.trend === 0 && (
+                              <div className="flex items-center justify-center px-1.5 py-0.5 bg-gray-100 text-gray-400 rounded-md text-[10px] font-bold">
+                                -
+                              </div>
+                            )}
+
+                            <div className={`flex items-center justify-center gap-0.5 px-1.5 py-0.5 rounded-md text-[10px] font-bold ${completedLessonsCount > 0 ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-400'}`}>
+                              <span style={{ fontFamily: "'Lato', sans-serif" }}>{completedLessonsCount}</span> <i className="fa-solid fa-star text-[9px]"></i>
+                            </div>
+
+                            {student.recentProgress ? (
+                              <div className="flex items-center justify-center gap-0.5 px-1.5 py-0.5 bg-purple-100 text-purple-600 rounded-full text-[10px] font-bold shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+                                {student.recentProgress > 0 ? '+' : ''}{student.recentProgress}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-1.5 mr-1">
+                          {student.fireBadgeUntil && student.fireBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '14px' }} title="Avancé de plus de 5 rangs !"></i>
+                          )}
+                          {student.lightningBadgeUntil && student.lightningBadgeUntil > Date.now() && (
+                            <i className="fa-solid fa-bolt text-purple-500 animate-pulse drop-shadow-sm" style={{ fontSize: '14px' }} title="10 exercices ou plus complétés !"></i>
+                          )}
+                        </div>
+                        <div className={`text-xs font-bold px-2.5 py-1.5 rounded-lg ${getScoreColorBadge(total)}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                          {total}/94
+                        </div>
+                        <div className="text-gray-400 flex items-center justify-center w-6 h-6">
+                          <i className={`fa-solid fa-chevron-down text-sm transition-transform duration-300 ${isExpanded ? 'rotate-180 text-purple-500' : ''}`}></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                      <div className="overflow-hidden">
+                        <ProgressDetails student={student} isPodium={false} />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
