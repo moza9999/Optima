@@ -15,16 +15,23 @@ const LESSONS = [
 ];
 
 const now = Date.now();
+const futureTime = Date.now() + 2 * 24 * 60 * 60 * 1000; // يومين في المستقبل لضمان بقاء الشارات
+
 const INITIAL_STUDENTS = [
-  { id: 1, name: 'Ait El Fatimi Ghali', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 2, name: 'Ouzgoumouz Saad', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 3, name: 'Bouchehab Mohamed', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 4, name: 'Afgourne Hasna', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 6, name: 'Bourza Aya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 8, name: 'Bouchfira Roumaissa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 9, name: 'Ait Izzi Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  // أبطال المنصة (بوديوم) مع شارات وتوهج
+  { id: 1, name: 'Ait El Fatimi Ghali', trend: 3, recentProgress: 15, fireBadgeUntil: futureTime, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 19, geo: 12, sys: 13, fon: 12, sta: 15, esp: 10 } }, // 92/94 (المركز الأول - بنفسجي)
+  { id: 2, name: 'Ouzgoumouz Saad', trend: 1, recentProgress: 5, fireBadgeUntil: futureTime, lightningBadgeUntil: null, progress: { eq: 11, vec: 19, geo: 12, sys: 13, fon: 12, sta: 10, esp: 10 } }, // 87/94 (المركز الثاني - أخضر)
+  { id: 3, name: 'Bouchehab Mohamed', trend: -1, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 11, vec: 15, geo: 12, sys: 10, fon: 10, sta: 12, esp: 8 } }, // 78/94 (المركز الثالث - أحمر)
+  
+  // اللائحة العامة بمختلف السيناريوهات (تعادل، صعود قوي، تراجع)
+  { id: 4, name: 'Afgourne Hasna', trend: 8, recentProgress: 20, fireBadgeUntil: futureTime, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 15, geo: 10, sys: 10, fon: 10, sta: 10, esp: 5 } }, // 71/94
+  { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 11, vec: 15, geo: 10, sys: 10, fon: 10, sta: 10, esp: 5 } }, // 71/94 (تعادل مع المركز 4)
+  { id: 6, name: 'Bourza Aya', trend: -3, recentProgress: 2, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 10, geo: 8, sys: 8, fon: 8, sta: 5, esp: 0 } }, // 49/94
+  { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 12, fireBadgeUntil: null, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 10, geo: 5, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 26/94
+  { id: 8, name: 'Bouchfira Roumaissa', trend: 2, recentProgress: 4, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 5, vec: 5, geo: 5, sys: 5, fon: 2, sta: 0, esp: 0 } }, // 22/94
+  { id: 9, name: 'Ait Izzi Yahya', trend: -1, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 10/94
+  
+  // باقي التلاميذ (أصفار لتجربة وضع الـ Empty State)
   { id: 10, name: 'Azzab Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 11, name: 'Ben Loktib Larbi', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 12, name: 'Hassan Hajar', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
@@ -138,13 +145,13 @@ const getRankMap = (studentsList) => {
 
 const PodiumMedal = ({ rank, defaultIcon }) => {
   if (rank === 1) return (
-    <div className="relative inline-flex items-center justify-center p-1">
+    <div className="relative inline-flex items-center justify-center p-1 animate-icon-pulse">
       <i className="fa-solid fa-trophy text-4xl shining-trophy relative z-10"></i>
       <i className="fa-solid fa-sparkles absolute top-0 -right-2 text-yellow-100 text-sm animate-pulse z-20 drop-shadow-sm"></i>
     </div>
   );
-  if (rank === 2) return <i className="fa-solid fa-medal text-2xl text-slate-400 drop-shadow-sm"></i>;
-  if (rank === 3) return <i className="fa-solid fa-medal text-2xl text-amber-600 drop-shadow-sm"></i>;
+  if (rank === 2) return <i className={`fa-solid fa-medal text-2xl text-slate-400 drop-shadow-sm animate-icon-pulse`}></i>;
+  if (rank === 3) return <i className={`fa-solid fa-medal text-2xl text-amber-600 drop-shadow-sm animate-icon-pulse`}></i>;
   return <i className={defaultIcon}></i>;
 };
 
@@ -202,8 +209,15 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
     });
   };
 
+  let podiumBorderClass = 'border-purple-100 shadow-[0_15px_40px_rgba(147,51,234,0.15)]';
+  if (isPodium) {
+      if (student.rank === 1) podiumBorderClass = 'border-[3px] border-purple-500 shadow-[0_15px_40px_rgba(168,85,247,0.3)]';
+      else if (student.rank === 2) podiumBorderClass = 'border-[3px] border-emerald-500 shadow-[0_15px_40px_rgba(16,185,129,0.3)]';
+      else if (student.rank === 3) podiumBorderClass = 'border-[3px] border-rose-500 shadow-[0_15px_40px_rgba(244,63,63,0.3)]';
+  }
+
   return (
-    <div className={`${isPodium ? 'bg-white rounded-2xl border border-purple-100 shadow-[0_15px_40px_rgba(147,51,234,0.15)] mt-2 overflow-hidden' : 'border-t border-gray-100 overflow-hidden rounded-b-2xl'}`}>
+    <div className={`${isPodium ? `bg-white rounded-2xl ${podiumBorderClass} mt-2 overflow-hidden` : 'border-t border-gray-100 overflow-hidden rounded-b-2xl'}`}>
       
       <div className="relative w-full overflow-hidden bg-gray-50/50">
         <div 
@@ -316,7 +330,7 @@ const VersusModal = ({ students, onClose }) => {
     const v2 = (s2.progress[lesson.id] || 0) / lesson.total;
 
     let anchor = "middle";
-    const labelX = center + (maxRadius + 22) * Math.cos(angle);
+    const labelX = center + (maxRadius + 18) * Math.cos(angle);
     if (labelX < center - 15) anchor = "end";
     else if (labelX > center + 15) anchor = "start";
 
@@ -328,7 +342,7 @@ const VersusModal = ({ students, onClose }) => {
       x2: center + maxRadius * v2 * Math.cos(angle),
       y2: center + maxRadius * v2 * Math.sin(angle),
       labelX,
-      labelY: center + (maxRadius + 15) * Math.sin(angle),
+      labelY: center + (maxRadius + 12) * Math.sin(angle),
       axisEndX: center + maxRadius * Math.cos(angle),
       axisEndY: center + maxRadius * Math.sin(angle),
       anchor
@@ -481,9 +495,16 @@ const VersusModal = ({ students, onClose }) => {
 
                   {/* التسميات */}
                   {radarData.map((d, i) => (
-                    <text key={`label-${i}`} x={d.labelX} y={d.labelY} textAnchor={d.anchor} dominantBaseline="middle" fontSize="10" fontWeight="bold" fill="#4b5563">
-                      {d.shortName}
-                    </text>
+                    <g key={`label-${i}`}>
+                      <text x={d.labelX} y={d.labelY - 7} textAnchor={d.anchor} dominantBaseline="middle" fontSize="10" fontWeight="bold" fill="#4b5563">
+                        {d.shortName}
+                      </text>
+                      <text x={d.labelX} y={d.labelY + 7} textAnchor={d.anchor} dominantBaseline="middle" fontSize="12" fontWeight="900" style={{ fontFamily: "'Lato', sans-serif" }}>
+                        <tspan fill="#a855f7">{s1.progress[d.id] || 0}</tspan>
+                        <tspan fill="#9ca3af" fontSize="9"> x </tspan>
+                        <tspan fill="#22c55e">{s2.progress[d.id] || 0}</tspan>
+                      </text>
+                    </g>
                   ))}
                 </svg>
               </div>
@@ -801,7 +822,9 @@ export default function App() {
 
   useEffect(() => {
     if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
+    
+    // تم تغيير المسار إلى v3_test مؤقتاً لتظهر البيانات الوهمية بدل البيانات المحفوظة سابقاً
+    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3_test');
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         if (!isAdminRef.current) {
@@ -1042,6 +1065,9 @@ export default function App() {
   }, [students]);
 
   const isVersusMode = comparingStudent || versusStudents !== null;
+  const isComp1 = comparingStudent && podiumSpots[0] && comparingStudent.id === podiumSpots[0].id;
+  const isComp2 = comparingStudent && podiumSpots[1] && comparingStudent.id === podiumSpots[1].id;
+  const isComp3 = comparingStudent && podiumSpots[2] && comparingStudent.id === podiumSpots[2].id;
 
   if (isAdmin) {
     return (
@@ -1058,6 +1084,13 @@ export default function App() {
             bottom: 0;
             background-color: #22c55e;
             animation: saveProgress 1s infinite linear;
+          }
+          @keyframes icon-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+          }
+          .animate-icon-pulse {
+            animation: icon-pulse 2s infinite ease-in-out;
           }
         `}</style>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -1192,7 +1225,7 @@ export default function App() {
         {!showAdminStats && (
           <button 
             onClick={() => setShowAdminStats(true)}
-            className="fixed bottom-4 right-4 w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.4)] flex items-center justify-center transition-transform hover:scale-105 z-40"
+            className="fixed bottom-4 right-4 w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.4)] flex items-center justify-center transition-transform hover:scale-105 z-40 animate-icon-pulse"
             title="Voir les statistiques"
           >
             <i className="fa-solid fa-chart-simple text-xl"></i>
@@ -1455,6 +1488,13 @@ export default function App() {
         .smooth-scroll {
           -webkit-overflow-scrolling: touch;
         }
+        @keyframes icon-pulse {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.15); }
+        }
+        .animate-icon-pulse {
+          animation: icon-pulse 2s infinite ease-in-out;
+        }
       `}</style>
       
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -1470,7 +1510,7 @@ export default function App() {
         href="https://drive.google.com/file/d/12D8ImLEhlVuzSV25-1fH9z7sfEsYn0ps/view?usp=sharing" 
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.4)] flex items-center justify-center transition-transform hover:scale-105 z-40"
+        className="fixed bottom-4 right-4 w-14 h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-[0_4px_15px_rgba(147,51,234,0.4)] flex items-center justify-center transition-transform hover:scale-105 z-40 animate-icon-pulse"
         title="Ouvrir le livre d'exercices"
       >
         <i className="fa-solid fa-book text-xl"></i>
@@ -1478,7 +1518,7 @@ export default function App() {
 
       <button 
         onClick={handleLockClick}
-        className="fixed bottom-4 left-4 text-gray-400 opacity-20 hover:opacity-100 transition-opacity p-2 z-40"
+        className="fixed bottom-4 left-4 text-gray-400 opacity-20 hover:opacity-100 transition-opacity p-2 z-40 animate-icon-pulse"
       >
         <i className="fa-solid fa-lock text-base"></i>
       </button>
@@ -1520,18 +1560,6 @@ export default function App() {
         </div>
       )}
 
-      {/* بادج اختيار المنافس العائم أسفل المنصة يتوسط أفقيا بدقة */}
-      {comparingStudent && (
-        <div className="fixed bottom-24 left-0 w-full flex justify-center z-50 pointer-events-none">
-          <div className="bg-gray-900 text-white px-5 py-3 rounded-full shadow-2xl flex items-center gap-3 animate-fade-in whitespace-nowrap pointer-events-auto">
-            <span className="text-xs font-medium">Sélectionnez le rival de <b className="text-purple-300">{comparingStudent.name.split(' ')[0]}</b>...</span>
-            <button onClick={() => setComparingStudent(null)} className="ml-1 w-6 h-6 bg-white/20 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors">
-              <i className="fa-solid fa-xmark text-[10px]"></i>
-            </button>
-          </div>
-        </div>
-      )}
-
       <div ref={headerRef} className="max-w-md mx-auto px-4 pt-3 pb-0">
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
           <div className="flex flex-col items-center justify-center text-center mb-4">
@@ -1543,10 +1571,17 @@ export default function App() {
               className="h-20 md:h-24 object-contain mb-1 transition-transform hover:scale-105" 
             />
 
-            <div className="bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[10px] font-black flex items-center justify-center gap-1.5 mt-2 uppercase tracking-widest border border-green-100 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
-              <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-              {liveOnline} Élève{liveOnline > 1 ? 's' : ''} en ligne
+            <div className="flex gap-2 mt-2">
+              <div className="bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[10px] font-black flex items-center justify-center gap-1.5 uppercase tracking-widest border border-green-100 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+                <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                {liveOnline} en ligne
+              </div>
+              <div className="bg-blue-50 text-blue-600 px-3 py-1.5 rounded-full text-[10px] font-black flex items-center justify-center gap-1.5 uppercase tracking-widest border border-blue-100 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+                <i className="fa-solid fa-eye text-[11px]"></i>
+                {dailyVisits} visite{dailyVisits > 1 ? 's' : ''}
+              </div>
             </div>
+
           </div>
 
           <div className="border-t border-gray-50 pt-5">
@@ -1608,8 +1643,8 @@ export default function App() {
                   {/* Rang 2 */}
                   {podiumSpots[1] && (
                   <div 
-                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[1].id ? 'scale-105' : ''}`}
-                    onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) handleCardClick(podiumSpots[1], expandedId === podiumSpots[1].id) }}
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[1].id ? 'scale-105' : ''} ${isComp2 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                    onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) handleCardClick(podiumSpots[1], expandedId === podiumSpots[1].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? <PodiumMedal rank={podiumSpots[1].rank} defaultIcon="fa-solid fa-medal text-2xl text-slate-400" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
@@ -1650,9 +1685,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        <span>{podiumSpots[1].rank}</span>
-                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
-                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
+                        {isComp2 ? <i className="fa-solid fa-lock text-xl"></i> : <span>{podiumSpots[1].rank}</span>}
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1662,8 +1697,8 @@ export default function App() {
                   {/* Rang 1 */}
                   {podiumSpots[0] && (
                   <div 
-                    className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 mx-[-4px] ${(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[0].id ? 'scale-105' : ''}`}
-                    onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) handleCardClick(podiumSpots[0], expandedId === podiumSpots[0].id) }}
+                    className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 mx-[-4px] ${(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[0].id ? 'scale-105' : ''} ${isComp1 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                    onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) handleCardClick(podiumSpots[0], expandedId === podiumSpots[0].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? <PodiumMedal rank={podiumSpots[0].rank} defaultIcon="fa-solid fa-trophy text-3xl text-yellow-500" /> : <i className="fa-solid fa-trophy text-3xl text-purple-200/50 drop-shadow-sm"></i>}
@@ -1704,9 +1739,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        <span>{podiumSpots[0].rank}</span>
-                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
-                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
+                        {isComp1 ? <i className="fa-solid fa-lock text-2xl"></i> : <span>{podiumSpots[0].rank}</span>}
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1716,8 +1751,8 @@ export default function App() {
                   {/* Rang 3 */}
                   {podiumSpots[2] && (
                   <div 
-                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[2].id ? 'scale-105' : ''}`}
-                    onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) handleCardClick(podiumSpots[2], expandedId === podiumSpots[2].id) }}
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[2].id ? 'scale-105' : ''} ${isComp3 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                    onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) handleCardClick(podiumSpots[2], expandedId === podiumSpots[2].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? <PodiumMedal rank={podiumSpots[2].rank} defaultIcon="fa-solid fa-medal text-2xl text-amber-600" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
@@ -1758,9 +1793,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        <span>{podiumSpots[2].rank}</span>
-                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
-                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend < 0 && <span className="text-[12px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
+                        {isComp3 ? <i className="fa-solid fa-lock text-xl"></i> : <span>{podiumSpots[2].rank}</span>}
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) && podiumSpots[2].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1784,12 +1819,12 @@ export default function App() {
               </>
             )}
             
-            {/* بادج اختيار الخصم العائم يتوسط أفقياً بدقة رياضية */}
+            {/* الشريط العلوي الأحمر المتناسق للمقارنة الملحمية */}
             {comparingStudent && (
               <div className="absolute -bottom-5 left-0 w-full flex justify-center z-50 pointer-events-none">
-                <div className="bg-red-500 text-white px-5 py-2 rounded-full shadow-lg shadow-red-500/30 flex items-center gap-3 animate-fade-in whitespace-nowrap border-2 border-white pointer-events-auto">
-                  <span className="text-[11px] font-bold uppercase tracking-wide">Sélectionnez le rival de <b className="text-yellow-300 ml-1">{comparingStudent.name.split(' ')[0]}</b></span>
-                  <button onClick={() => setComparingStudent(null)} className="ml-1 w-5 h-5 bg-black/20 rounded-full flex items-center justify-center hover:bg-black/30 transition-colors">
+                <div className="bg-red-500 text-white px-5 py-3 rounded-full shadow-lg shadow-red-500/30 flex items-center gap-3 animate-fade-in whitespace-nowrap border-2 border-white pointer-events-auto">
+                  <span className="text-xs font-normal">Sélectionnez le rival de <b className="text-yellow-300 font-bold ml-1">{comparingStudent.name.split(' ')[0]}</b>...</span>
+                  <button onClick={() => setComparingStudent(null)} className="ml-1 w-6 h-6 bg-black/20 rounded-full flex items-center justify-center hover:bg-black/30 transition-colors">
                     <i className="fa-solid fa-xmark text-[10px]"></i>
                   </button>
                 </div>
@@ -1810,6 +1845,7 @@ export default function App() {
                 const isExpanded = expandedId === student.id;
                 const completedLessonsCount = calculateCompletedLessons(student.progress);
                 const isZero = total === 0;
+                const isCurrentlyComparing = comparingStudent && comparingStudent.id === student.id;
 
                 const nowTime = Date.now();
                 const hasFire = student.fireBadgeUntil && student.fireBadgeUntil > nowTime;
@@ -1817,7 +1853,9 @@ export default function App() {
                 const hasBoth = hasFire && hasLightning;
 
                 let rankBadgeColor = 'bg-gray-50 border-gray-200 text-gray-700'; 
-                if (student.trend > 0) {
+                if (isCurrentlyComparing) {
+                  rankBadgeColor = 'bg-red-50 border-red-200 text-red-400';
+                } else if (student.trend > 0) {
                   rankBadgeColor = 'bg-green-100 border-green-200 text-green-700'; 
                 } else if (student.trend < 0) {
                   rankBadgeColor = 'bg-red-100 border-red-200 text-red-700'; 
@@ -1828,7 +1866,10 @@ export default function App() {
                 let wrapperClass = "mb-3 rounded-2xl transition-all duration-300 shadow-sm hover:shadow-md ";
                 let innerClass = "rounded-2xl overflow-hidden bg-white ";
 
-                if (hasBoth) {
+                if (isCurrentlyComparing) {
+                  wrapperClass += "border-2 border-dashed border-red-300 opacity-50 shadow-none hover:shadow-none ";
+                  innerClass = "rounded-2xl overflow-hidden bg-red-50/50 cursor-not-allowed ";
+                } else if (hasBoth) {
                   wrapperClass += "p-[1px] bg-gradient-to-r from-red-500 via-purple-500 to-red-500 animate-gradient-x";
                 } else if (hasFire) {
                   wrapperClass += "p-[1px] bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 animate-gradient-x";
@@ -1840,6 +1881,7 @@ export default function App() {
                 }
 
                 const nameClass = `font-bold text-sm pb-0.5 ${
+                  isCurrentlyComparing ? 'text-red-400' :
                   hasBoth ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-500 to-red-500 animate-gradient-x' :
                   hasFire ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 animate-gradient-x' :
                   hasLightning ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-fuchsia-400 to-purple-500 animate-gradient-x' :
@@ -1850,12 +1892,12 @@ export default function App() {
                   <div key={student.id} className={wrapperClass}>
                     <div className={innerClass}>
                       <div 
-                        className="flex items-center justify-between p-3 cursor-pointer active:bg-gray-50"
-                        onClick={() => handleCardClick(student, isExpanded)}
+                        className={`flex items-center justify-between p-3 ${isCurrentlyComparing ? 'cursor-not-allowed' : 'cursor-pointer active:bg-gray-50'}`}
+                        onClick={() => { if (!isCurrentlyComparing) handleCardClick(student, isExpanded); }}
                       >
                         <div className="flex items-center gap-3">
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors shrink-0 ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                            {student.rank}
+                            {isCurrentlyComparing ? <i className="fa-solid fa-lock text-xs"></i> : student.rank}
                           </div>
                           <div>
                             <h3 className={nameClass}>{student.name}</h3>
