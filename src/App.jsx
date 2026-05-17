@@ -784,34 +784,47 @@ export default function App() {
 
     if (isStandalone || isDismissed || isAdmin) return;
 
-    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    
-    if (isIOS) {
-      setInstallPlatform('ios');
-      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
-      return () => clearTimeout(timer);
-    }
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+    const isAndroid = /android/i.test(ua);
 
+    // نلتقط إشارة التثبيت إذا أطلقها المتصفح، لكننا لا ننتظرها لإظهار النافذة
     const handleBeforeInstallPrompt = (e) => {
       e.preventDefault();
       deferredPrompt.current = e;
-      setInstallPlatform('android');
-      setTimeout(() => setShowInstallPrompt(true), 2500);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
 
-    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    if (isIOS) {
+      setInstallPlatform('ios');
+      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
+      return () => clearTimeout(timer);
+    } else if (isAndroid) {
+      setInstallPlatform('android');
+      // إجبار النافذة على الظهور للأندرويد بعد 3 ثوانٍ دائماً
+      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      };
+    }
   }, [isAdmin]);
 
   const handleInstallClick = async () => {
-    if (installPlatform === 'android' && deferredPrompt.current) {
-      deferredPrompt.current.prompt();
-      const { outcome } = await deferredPrompt.current.userChoice;
-      if (outcome === 'accepted') {
-        setShowInstallPrompt(false);
+    if (installPlatform === 'android') {
+      if (deferredPrompt.current) {
+        // إذا كان المتصفح يدعم الزر المباشر
+        deferredPrompt.current.prompt();
+        const { outcome } = await deferredPrompt.current.userChoice;
+        if (outcome === 'accepted') {
+          setShowInstallPrompt(false);
+        }
+        deferredPrompt.current = null;
+      } else {
+        // إذا كان المتصفح يمنع الزر المباشر (مثل بعض نسخ Brave الصارمة)
+        alert("Pour installer Optimaths : \n\nAppuyez sur le menu du navigateur (les 3 points ⋮ en haut) et choisissez 'Ajouter à l'écran d'accueil' ou 'Installer l'application'.");
       }
-      deferredPrompt.current = null;
     }
   };
 
