@@ -568,7 +568,6 @@ export default function App() {
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [adminAnnText, setAdminAnnText] = useState('');
   const [adminAnnActive, setAdminAnnActive] = useState(false);
-  const [dontShowAnnAgain, setDontShowAnnAgain] = useState(false);
 
   // حالات الـ Analytics المدمجة حيا مع فايربيز
   const [showAdminStats, setShowAdminStats] = useState(false);
@@ -766,7 +765,11 @@ export default function App() {
   }, [user, db]);
 
   const handleDismissAnnouncement = () => {
-    if (dontShowAnnAgain && announcement) {
+    setShowAnnouncement(false);
+  };
+
+  const handleDontShowAgain = () => {
+    if (announcement) {
       localStorage.setItem('optima_hidden_ann', announcement.id);
     }
     setShowAnnouncement(false);
@@ -1608,16 +1611,12 @@ export default function App() {
                   C'est compris
                 </button>
                 
-                <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
-                  <input 
-                    type="checkbox" 
-                    className="w-4 h-4 rounded border-2 border-gray-300 accent-purple-600 focus:ring-purple-500 cursor-pointer transition-colors" 
-                    style={{ backgroundColor: 'white' }}
-                    checked={dontShowAnnAgain}
-                    onChange={(e) => setDontShowAnnAgain(e.target.checked)}
-                  />
-                  <span className="select-none">Ne plus afficher cette annonce</span>
-                </label>
+                <button 
+                  onClick={handleDontShowAgain}
+                  className="text-xs text-gray-400 hover:text-purple-600 transition-colors mt-1 underline underline-offset-4 decoration-gray-300 hover:decoration-purple-400"
+                >
+                  Ne plus afficher cette annonce
+                </button>
               </div>
             </div>
           </div>
