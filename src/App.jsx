@@ -1532,7 +1532,7 @@ export default function App() {
         </div>
       )}
 
-      <div ref={headerRef} className="max-w-md mx-auto px-4 pt-8 pb-0">
+      <div ref={headerRef} className="max-w-md mx-auto px-4 pt-3 pb-0">
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
           <div className="flex flex-col items-center justify-center text-center mb-4">
             
