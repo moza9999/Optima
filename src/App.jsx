@@ -28,7 +28,7 @@ const INITIAL_STUDENTS = [
   { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 11, vec: 15, geo: 10, sys: 10, fon: 10, sta: 10, esp: 5 } }, // 71/94 (تعادل مع المركز 4)
   { id: 6, name: 'Bourza Aya', trend: -3, recentProgress: 2, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 10, geo: 8, sys: 8, fon: 8, sta: 5, esp: 0 } }, // 49/94
   { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 12, fireBadgeUntil: null, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 10, geo: 5, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 26/94
-  { id: 8, name: 'Bouchfira Roumaissa', trend: 2, recentProgress: 4, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 5, vec: 5, geo: 5, sys: 5, fon: 2, sta: 0, esp: 0 } }, // 22/94
+  { id: 8, name: 'Bouchfira Roumaissa', trend: 2, recentProgress: 4, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 5, vec: 5, geo: 5, sys: 5, font: 2, sta: 0, esp: 0 } }, // 22/94
   { id: 9, name: 'Ait Izzi Yahya', trend: -1, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 10/94
   
   // باقي التلاميذ (أصفار لتجربة وضع الـ Empty State)
@@ -38,7 +38,7 @@ const INITIAL_STUDENTS = [
   { id: 13, name: 'Errabhi Ayman', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 14, name: 'Ndali Reda', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 15, name: 'Kaarir Ouaiss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 16, name: 'Kamrate Israe', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 16, name: 'Kamrate Israe', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, font: 0, sta: 0, esp: 0 } },
   { id: 17, name: 'Hamdi Fatima Ezzahra', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 18, name: 'Aid Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 19, name: 'Afgourne Amina', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
@@ -167,7 +167,7 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
 
   const shortNames = {
     'eq': 'Équations', 'vec': 'Vecteurs', 'geo': 'Analytique',
-    'sys': 'Systèmes', 'fon': 'Fonctions', 'sta': 'Statistiques', 'esp': 'Espace'
+    'sys': 'Systèmes', 'fon': 'Fonctions', 'sta': 'Stats', 'esp': 'Espace'
   };
 
   const radarData = LESSONS.map((lesson, i) => {
@@ -175,7 +175,7 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
     const value = (student.progress[lesson.id] || 0) / lesson.total;
     
     let anchor = "middle";
-    const labelX = center + (maxRadius + 18) * Math.cos(angle);
+    const labelX = center + (maxRadius + 14) * Math.cos(angle);
     if (labelX < center - 10) anchor = "end";
     else if (labelX > center + 10) anchor = "start";
 
@@ -321,7 +321,7 @@ const VersusModal = ({ students, onClose }) => {
 
   const shortNames = {
     'eq': 'Équations', 'vec': 'Vecteurs', 'geo': 'Analytique',
-    'sys': 'Systèmes', 'fon': 'Fonctions', 'sta': 'Statistiques', 'esp': 'Espace'
+    'sys': 'Systèmes', 'fon': 'Fonctions', 'sta': 'Stats', 'esp': 'Espace'
   };
 
   const radarData = LESSONS.map((lesson, i) => {
@@ -330,7 +330,7 @@ const VersusModal = ({ students, onClose }) => {
     const v2 = (s2.progress[lesson.id] || 0) / lesson.total;
 
     let anchor = "middle";
-    const labelX = center + (maxRadius + 18) * Math.cos(angle);
+    const labelX = center + (maxRadius + 16) * Math.cos(angle);
     if (labelX < center - 15) anchor = "end";
     else if (labelX > center + 15) anchor = "start";
 
@@ -587,6 +587,11 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false); 
   
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  // PWA Smart Install Prompt State
+  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
+  const [installPlatform, setInstallPlatform] = useState(null);
+  const deferredPrompt = useRef(null);
   
   const headerRef = useRef(null);
 
@@ -711,7 +716,7 @@ export default function App() {
   // الاستماع الحي للإحصائيات داخل لوحة التحكم للإدارة فقط
   // ----------------------------------------------------------------------------------
   useEffect(() => {
-    if (!user || !isAdmin || !db) return; 
+    if (!user || !db) return; 
 
     const counterRef = doc(db, 'artifacts', appId, 'public', 'data', 'analytics', 'counters');
     const unsubscribeCounters = onSnapshot(counterRef, (docSnap) => {
@@ -723,7 +728,7 @@ export default function App() {
     });
 
     return () => unsubscribeCounters();
-  }, [user, isAdmin, db]);
+  }, [user, db]);
 
   // ----------------------------------------------------------------------------------
   // التحكم المباشر والدقيق في العداد الصغير على الهواتف باستخدام مراقب التمرير
@@ -769,6 +774,51 @@ export default function App() {
       setIsSticky(false);
     }
   }, [isAdmin]);
+
+  // ----------------------------------------------------------------------------------
+  // نظام النافذة المنبثقة الذكية لتحميل التطبيق (PWA Smart Install Prompt)
+  // ----------------------------------------------------------------------------------
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    const isDismissed = localStorage.getItem('optima_install_dismissed') === 'true';
+
+    if (isStandalone || isDismissed || isAdmin) return;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    if (isIOS) {
+      setInstallPlatform('ios');
+      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
+      return () => clearTimeout(timer);
+    }
+
+    const handleBeforeInstallPrompt = (e) => {
+      e.preventDefault();
+      deferredPrompt.current = e;
+      setInstallPlatform('android');
+      setTimeout(() => setShowInstallPrompt(true), 2500);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+  }, [isAdmin]);
+
+  const handleInstallClick = async () => {
+    if (installPlatform === 'android' && deferredPrompt.current) {
+      deferredPrompt.current.prompt();
+      const { outcome } = await deferredPrompt.current.userChoice;
+      if (outcome === 'accepted') {
+        setShowInstallPrompt(false);
+      }
+      deferredPrompt.current = null;
+    }
+  };
+
+  const handleDismissInstall = () => {
+    localStorage.setItem('optima_install_dismissed', 'true');
+    setShowInstallPrompt(false);
+  };
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
@@ -1502,6 +1552,46 @@ export default function App() {
 
       <VersusModal students={versusStudents} onClose={() => setVersusStudents(null)} />
 
+      {/* النافذة المنبثقة الذكية لتحميل التطبيق */}
+      {showInstallPrompt && (
+        <div className="fixed inset-x-0 bottom-4 z-[150] p-4 animate-fade-in flex justify-center pointer-events-none">
+          <div className="bg-white rounded-3xl p-5 shadow-[0_10px_40px_rgba(168,85,247,0.2)] border-2 border-purple-100 relative overflow-hidden w-full max-w-sm pointer-events-auto">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-100 to-transparent rounded-full -mr-10 -mt-10 opacity-50"></div>
+            
+            <button onClick={handleDismissInstall} className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-gray-200 transition-colors z-10">
+              <i className="fa-solid fa-xmark text-sm"></i>
+            </button>
+
+            <div className="flex items-start gap-4 relative z-10">
+              <img src="/logo.png" alt="Optima Icon" className="w-14 h-14 rounded-2xl shadow-sm border border-gray-100 object-contain bg-white p-1 shrink-0" />
+              <div className="flex-1 pr-2">
+                <h3 className="text-sm font-black text-gray-800 leading-tight mb-1">Installez Optimaths ! 🚀</h3>
+                <p className="text-[11px] text-gray-500 mb-3 leading-relaxed font-medium">
+                  Pour une expérience plein écran, plus rapide et sans distractions.
+                </p>
+
+                {installPlatform === 'android' ? (
+                  <button onClick={handleInstallClick} className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95">
+                    <i className="fa-solid fa-download"></i> Installer l'application
+                  </button>
+                ) : (
+                  <div className="bg-purple-50 rounded-xl p-3 border border-purple-100 text-[11px] text-purple-800 font-bold">
+                    <div className="mb-2 flex items-center gap-1.5">
+                      <span className="bg-purple-200 text-purple-700 w-4 h-4 rounded-full flex items-center justify-center text-[9px] shrink-0">1</span>
+                      <span>Appuyez sur <i className="fa-solid fa-arrow-up-from-bracket mx-0.5 border border-gray-200 bg-white p-1 rounded shadow-sm text-blue-500 text-[10px]"></i> ci-dessous.</span>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <span className="bg-purple-200 text-purple-700 w-4 h-4 rounded-full flex items-center justify-center text-[9px] shrink-0">2</span>
+                      <span>Choisissez <strong className="bg-white px-1.5 py-0.5 rounded shadow-sm inline-flex items-center gap-1 font-black text-gray-700">Sur l'écran d'accueil <i className="fa-solid fa-square-plus opacity-70 text-[10px]"></i></strong></span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className={`fixed inset-0 z-[100] bg-[#fafafa] flex flex-col items-center justify-center transition-opacity duration-700 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <img src="https://i.pinimg.com/originals/54/58/a1/5458a14ae4c8f07055b7441ff0f234cf.gif" alt="Chargement..." className="w-32 h-32 object-contain" />
       </div>
@@ -1525,7 +1615,7 @@ export default function App() {
 
       {showLogin && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl relative">
+          <div className="bg-white rounded-3xl p-6 w-full max-sm shadow-2xl relative">
             <button 
               onClick={() => { setShowLogin(false); setLoginError(false); setPassword(''); }}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
