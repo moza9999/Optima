@@ -10,35 +10,29 @@ const LESSONS = [
   { id: 'geo', name: 'Géométrie analytique', total: 12, icon: '📐' },
   { id: 'sys', name: 'Systèmes', total: 13, icon: '🔗' },
   { id: 'fon', name: 'Fonctions', total: 12, icon: '📈' },
-  { id: 'sta', name: 'Statistiques', total: 15, icon: '📊' },
-  { id: 'esp', name: 'Géométrie dans l\'espace', total: 12, icon: '🧊' }
+  { id: 'sta', name: 'Stats', total: 15, icon: '📊' },
+  { id: 'esp', name: 'Espace', total: 12, icon: '🧊' }
 ];
 
 const now = Date.now();
-const futureTime = Date.now() + 2 * 24 * 60 * 60 * 1000; // يومين في المستقبل لضمان بقاء الشارات
 
 const INITIAL_STUDENTS = [
-  // أبطال المنصة (بوديوم) مع شارات وتوهج
-  { id: 1, name: 'Ait El Fatimi Ghali', trend: 3, recentProgress: 15, fireBadgeUntil: futureTime, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 19, geo: 12, sys: 13, fon: 12, sta: 15, esp: 10 } }, // 92/94 (المركز الأول - بنفسجي)
-  { id: 2, name: 'Ouzgoumouz Saad', trend: 1, recentProgress: 5, fireBadgeUntil: futureTime, lightningBadgeUntil: null, progress: { eq: 11, vec: 19, geo: 12, sys: 13, fon: 12, sta: 10, esp: 10 } }, // 87/94 (المركز الثاني - أخضر)
-  { id: 3, name: 'Bouchehab Mohamed', trend: -1, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 11, vec: 15, geo: 12, sys: 10, fon: 10, sta: 12, esp: 8 } }, // 78/94 (المركز الثالث - أحمر)
-  
-  // اللائحة العامة بمختلف السيناريوهات (تعادل، صعود قوي، تراجع)
-  { id: 4, name: 'Afgourne Hasna', trend: 8, recentProgress: 20, fireBadgeUntil: futureTime, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 15, geo: 10, sys: 10, fon: 10, sta: 10, esp: 5 } }, // 71/94
-  { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 11, vec: 15, geo: 10, sys: 10, fon: 10, sta: 10, esp: 5 } }, // 71/94 (تعادل مع المركز 4)
-  { id: 6, name: 'Bourza Aya', trend: -3, recentProgress: 2, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 10, geo: 8, sys: 8, fon: 8, sta: 5, esp: 0 } }, // 49/94
-  { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 12, fireBadgeUntil: null, lightningBadgeUntil: futureTime, progress: { eq: 11, vec: 10, geo: 5, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 26/94
-  { id: 8, name: 'Bouchfira Roumaissa', trend: 2, recentProgress: 4, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 5, vec: 5, geo: 5, sys: 5, font: 2, sta: 0, esp: 0 } }, // 22/94
-  { id: 9, name: 'Ait Izzi Yahya', trend: -1, recentProgress: 0, fireBadgeUntil: null, lightningBadgeUntil: null, progress: { eq: 10, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } }, // 10/94
-  
-  // باقي التلاميذ (أصفار لتجربة وضع الـ Empty State)
+  { id: 1, name: 'Ait El Fatimi Ghali', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 2, name: 'Ouzgoumouz Saad', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 3, name: 'Bouchehab Mohamed', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 4, name: 'Afgourne Hasna', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 6, name: 'Bourza Aya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 8, name: 'Bouchfira Roumaissa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
+  { id: 9, name: 'Ait Izzi Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 10, name: 'Azzab Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 11, name: 'Ben Loktib Larbi', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 12, name: 'Hassan Hajar', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 13, name: 'Errabhi Ayman', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 14, name: 'Ndali Reda', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 15, name: 'Kaarir Ouaiss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 16, name: 'Kamrate Israe', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, font: 0, sta: 0, esp: 0 } },
+  { id: 16, name: 'Kamrate Israe', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 17, name: 'Hamdi Fatima Ezzahra', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 18, name: 'Aid Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
   { id: 19, name: 'Afgourne Amina', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
@@ -121,11 +115,11 @@ const getProgressBarColor = (percentage) => {
 
 const renderPodiumName = (name) => {
   const parts = name.split(' ');
-  if (parts.length === 1) return <span className="block truncate">{name}</span>;
+  if (parts.length === 1) return <span className="block truncate w-full">{name}</span>;
   return (
     <>
-      <span className="block truncate">{parts[0]}</span>
-      <span className="block truncate">{parts.slice(1).join(' ')}</span>
+      <span className="block truncate w-full">{parts[0]}</span>
+      <span className="block truncate w-full">{parts.slice(1).join(' ')}</span>
     </>
   );
 };
@@ -569,6 +563,13 @@ export default function App() {
   const [adminExpandedId, setAdminExpandedId] = useState(null);
   const [adminSortDesc, setAdminSortDesc] = useState(true); 
   
+  // Announcement States
+  const [announcement, setAnnouncement] = useState(null);
+  const [showAnnouncement, setShowAnnouncement] = useState(false);
+  const [adminAnnText, setAdminAnnText] = useState('');
+  const [adminAnnActive, setAdminAnnActive] = useState(false);
+  const [dontShowAnnAgain, setDontShowAnnAgain] = useState(false);
+
   // حالات الـ Analytics المدمجة حيا مع فايربيز
   const [showAdminStats, setShowAdminStats] = useState(false);
   const [statsTab, setStatsTab] = useState('lessons'); 
@@ -587,11 +588,6 @@ export default function App() {
   const [isSaving, setIsSaving] = useState(false); 
   
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-
-  // PWA Smart Install Prompt State
-  const [showInstallPrompt, setShowInstallPrompt] = useState(false);
-  const [installPlatform, setInstallPlatform] = useState(null);
-  const deferredPrompt = useRef(null);
   
   const headerRef = useRef(null);
 
@@ -731,6 +727,73 @@ export default function App() {
   }, [user, db]);
 
   // ----------------------------------------------------------------------------------
+  // الاستماع لنظام الإعلانات الحي
+  // ----------------------------------------------------------------------------------
+  useEffect(() => {
+    if (!user || !db) return;
+    const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
+    const unsubAnn = onSnapshot(annRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        setAnnouncement(data);
+        if (isAdminRef.current) {
+          setAdminAnnText(data.text || '');
+          setAdminAnnActive(data.isActive || false);
+        } else if (data.isActive && data.text) {
+          const hiddenId = localStorage.getItem('optima_hidden_ann');
+          if (hiddenId !== data.id) {
+            setShowAnnouncement(true);
+          } else {
+            setShowAnnouncement(false);
+          }
+        } else {
+          setShowAnnouncement(false);
+        }
+      } else {
+        if (isAdminRef.current) {
+           setDoc(annRef, { text: '', isActive: false, id: Date.now().toString() }).catch(console.error);
+        }
+      }
+    });
+    return () => unsubAnn();
+  }, [user, db]);
+
+  const handleSaveAnnouncement = async () => {
+    if (!db) return;
+    const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
+    try {
+      // نعطي id جديد عند كل حفظ ليظهر الإعلان للجميع من جديد حتى من قام بإخفاء الإعلان القديم
+      await setDoc(annRef, {
+        text: adminAnnText,
+        isActive: adminAnnActive,
+        id: Date.now().toString() 
+      });
+      // إشعار بسيط بنجاح الحفظ
+      const btn = document.getElementById('save-ann-btn');
+      if(btn) {
+         const originalText = btn.innerHTML;
+         btn.innerHTML = '<i class="fa-solid fa-check"></i> Publié';
+         btn.classList.add('bg-green-500', 'text-white');
+         btn.classList.remove('bg-purple-100', 'text-purple-600');
+         setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.remove('bg-green-500', 'text-white');
+            btn.classList.add('bg-purple-100', 'text-purple-600');
+         }, 2000);
+      }
+    } catch (e) {
+      console.error("Erreur annoncement:", e);
+    }
+  };
+
+  const handleDismissAnnouncement = () => {
+    if (dontShowAnnAgain && announcement) {
+      localStorage.setItem('optima_hidden_ann', announcement.id);
+    }
+    setShowAnnouncement(false);
+  };
+
+  // ----------------------------------------------------------------------------------
   // التحكم المباشر والدقيق في العداد الصغير على الهواتف باستخدام مراقب التمرير
   // ----------------------------------------------------------------------------------
   useEffect(() => {
@@ -774,64 +837,6 @@ export default function App() {
       setIsSticky(false);
     }
   }, [isAdmin]);
-
-  // ----------------------------------------------------------------------------------
-  // نظام النافذة المنبثقة الذكية لتحميل التطبيق (PWA Smart Install Prompt)
-  // ----------------------------------------------------------------------------------
-  useEffect(() => {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
-    const isDismissed = localStorage.getItem('optima_install_dismissed') === 'true';
-
-    if (isStandalone || isDismissed || isAdmin) return;
-
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-    const isAndroid = /android/i.test(ua);
-
-    // نلتقط إشارة التثبيت إذا أطلقها المتصفح، لكننا لا ننتظرها لإظهار النافذة
-    const handleBeforeInstallPrompt = (e) => {
-      e.preventDefault();
-      deferredPrompt.current = e;
-    };
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    if (isIOS) {
-      setInstallPlatform('ios');
-      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
-      return () => clearTimeout(timer);
-    } else if (isAndroid) {
-      setInstallPlatform('android');
-      // إجبار النافذة على الظهور للأندرويد بعد 3 ثوانٍ دائماً
-      const timer = setTimeout(() => setShowInstallPrompt(true), 3000);
-      return () => {
-        clearTimeout(timer);
-        window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-      };
-    }
-  }, [isAdmin]);
-
-  const handleInstallClick = async () => {
-    if (installPlatform === 'android') {
-      if (deferredPrompt.current) {
-        // إذا كان المتصفح يدعم الزر المباشر
-        deferredPrompt.current.prompt();
-        const { outcome } = await deferredPrompt.current.userChoice;
-        if (outcome === 'accepted') {
-          setShowInstallPrompt(false);
-        }
-        deferredPrompt.current = null;
-      } else {
-        // إذا كان المتصفح يمنع الزر المباشر (مثل بعض نسخ Brave الصارمة)
-        alert("Pour installer Optimaths : \n\nAppuyez sur le menu du navigateur (les 3 points ⋮ en haut) et choisissez 'Ajouter à l'écran d'accueil' ou 'Installer l'application'.");
-      }
-    }
-  };
-
-  const handleDismissInstall = () => {
-    localStorage.setItem('optima_install_dismissed', 'true');
-    setShowInstallPrompt(false);
-  };
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
@@ -886,8 +891,8 @@ export default function App() {
   useEffect(() => {
     if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
     
-    // تم تغيير المسار إلى v3_test مؤقتاً لتظهر البيانات الوهمية بدل البيانات المحفوظة سابقاً
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3_test');
+    // تم استرجاع مسار البيانات الأصلي (v2) ليقرأ بيانات تلاميذك الحقيقية
+    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         if (!isAdminRef.current) {
@@ -1041,6 +1046,7 @@ export default function App() {
     setStudents(updatedStudents);
 
     if (user && db) {
+      // تم استرجاع مسار البيانات الأصلي (v2) لحفظ النقاط الحقيقية
       const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
       try {
         await setDoc(docRef, { students: updatedStudents });
@@ -1358,6 +1364,32 @@ export default function App() {
               </button>
             </div>
 
+            {/* نظام إدارة الإعلانات */}
+            <div className="bg-purple-50 rounded-2xl p-4 mb-4 border border-purple-100">
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-bold text-purple-800 flex items-center gap-2">
+                  <i className="fa-regular fa-bullhorn"></i> Annonce Publique
+                </h3>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={adminAnnActive} onChange={(e) => setAdminAnnActive(e.target.checked)} />
+                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
+                </label>
+              </div>
+              <textarea 
+                value={adminAnnText}
+                onChange={(e) => setAdminAnnText(e.target.value)}
+                placeholder="Écrivez votre message ici..."
+                className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none"
+              ></textarea>
+              <button 
+                id="save-ann-btn"
+                onClick={handleSaveAnnouncement}
+                className="w-full py-2 bg-purple-100 text-purple-600 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-paper-plane"></i> Publier l'annonce
+              </button>
+            </div>
+
             <div className="flex gap-2 relative">
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
@@ -1391,7 +1423,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="max-w-md mx-auto px-4 mt-6">
+        <div className="max-w-md mx-auto px-4 mt-2">
           {filteredAdminStudents.length === 0 ? (
             <div className="text-center py-10 text-gray-400">
               <i className="fa-solid fa-magnifying-glass-minus text-4xl mb-2 opacity-50"></i>
@@ -1411,17 +1443,17 @@ export default function App() {
                       className="p-4 flex items-center justify-between cursor-pointer active:bg-gray-50"
                       onClick={() => setAdminExpandedId(isExpanded ? null : student.id)}
                     >
-                      <div className="flex-1 mr-4 flex items-center">
+                      <div className="flex-1 mr-4 flex items-center min-w-0">
                         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-gray-50 border border-gray-200 text-gray-500 font-bold text-xs mr-3 shadow-sm shrink-0" style={{ fontFamily: "'Lato', sans-serif" }}>
                           {student.rank}
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 min-w-0">
                           <input
                             type="text"
                             value={student.name}
                             onChange={(e) => updateStudentName(student.id, e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="font-bold text-gray-800 text-sm w-full bg-transparent border-b border-dashed border-gray-300 focus:border-solid focus:border-purple-500 focus:outline-none transition-colors pb-0.5"
+                            className="font-bold text-gray-800 text-sm w-full bg-transparent border-b border-dashed border-gray-300 focus:border-solid focus:border-purple-500 focus:outline-none transition-colors pb-0.5 truncate"
                             title="Modifier le nom de l'élève"
                           />
                           <div className="flex items-center gap-2 mt-1">
@@ -1435,7 +1467,7 @@ export default function App() {
                           </div>
                         </div>
                       </div>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${isExpanded ? 'bg-purple-100 text-purple-600' : 'bg-gray-50 text-gray-400'}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors shrink-0 ${isExpanded ? 'bg-purple-100 text-purple-600' : 'bg-gray-50 text-gray-400'}`}>
                         <i className={`fa-solid fa-pen text-sm transition-transform ${isExpanded ? 'scale-110' : ''}`}></i>
                       </div>
                     </div>
@@ -1563,47 +1595,47 @@ export default function App() {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-      <VersusModal students={versusStudents} onClose={() => setVersusStudents(null)} />
-
-      {/* النافذة المنبثقة الذكية لتحميل التطبيق */}
-      {showInstallPrompt && (
-        <div className="fixed inset-x-0 bottom-4 z-[150] p-4 animate-fade-in flex justify-center pointer-events-none">
-          <div className="bg-white rounded-3xl p-5 shadow-[0_10px_40px_rgba(168,85,247,0.2)] border-2 border-purple-100 relative overflow-hidden w-full max-w-sm pointer-events-auto">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-purple-100 to-transparent rounded-full -mr-10 -mt-10 opacity-50"></div>
+      {/* نافذة الإعلانات العامة (Public Announcement Modal) */}
+      {showAnnouncement && announcement && announcement.isActive && !isAdmin && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[200] p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] relative overflow-hidden text-center border border-white/20">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
             
-            <button onClick={handleDismissInstall} className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:bg-gray-200 transition-colors z-10">
-              <i className="fa-solid fa-xmark text-sm"></i>
-            </button>
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-purple-500/30 animate-icon-pulse">
+              <i className="fa-regular fa-bullhorn text-2xl"></i>
+            </div>
+            
+            <h2 className="text-xl font-black text-gray-800 mb-3">Annonce !</h2>
+            
+            <div className="bg-gray-50 rounded-2xl p-4 mb-5 border border-gray-100">
+               <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
+                 {announcement.text}
+               </p>
+            </div>
 
-            <div className="flex items-start gap-4 relative z-10">
-              <img src="/logo.png" alt="Optima Icon" className="w-14 h-14 rounded-2xl shadow-sm border border-gray-100 object-contain bg-white p-1 shrink-0" />
-              <div className="flex-1 pr-2">
-                <h3 className="text-sm font-black text-gray-800 leading-tight mb-1">Installez Optimaths ! 🚀</h3>
-                <p className="text-[11px] text-gray-500 mb-3 leading-relaxed font-medium">
-                  Pour une expérience plein écran, plus rapide et sans distractions.
-                </p>
-
-                {installPlatform === 'android' ? (
-                  <button onClick={handleInstallClick} className="w-full bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white font-bold py-2.5 rounded-xl text-xs transition-all shadow-sm flex items-center justify-center gap-2 active:scale-95">
-                    <i className="fa-solid fa-download"></i> Installer l'application
-                  </button>
-                ) : (
-                  <div className="bg-purple-50 rounded-xl p-3 border border-purple-100 text-[11px] text-purple-800 font-bold">
-                    <div className="mb-2 flex items-center gap-1.5">
-                      <span className="bg-purple-200 text-purple-700 w-4 h-4 rounded-full flex items-center justify-center text-[9px] shrink-0">1</span>
-                      <span>Appuyez sur <i className="fa-solid fa-arrow-up-from-bracket mx-0.5 border border-gray-200 bg-white p-1 rounded shadow-sm text-blue-500 text-[10px]"></i> ci-dessous.</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <span className="bg-purple-200 text-purple-700 w-4 h-4 rounded-full flex items-center justify-center text-[9px] shrink-0">2</span>
-                      <span>Choisissez <strong className="bg-white px-1.5 py-0.5 rounded shadow-sm inline-flex items-center gap-1 font-black text-gray-700">Sur l'écran d'accueil <i className="fa-solid fa-square-plus opacity-70 text-[10px]"></i></strong></span>
-                    </div>
-                  </div>
-                )}
-              </div>
+            <div className="flex flex-col gap-3">
+              <button 
+                onClick={handleDismissAnnouncement}
+                className="w-full py-3.5 bg-gray-900 text-white rounded-xl font-bold text-sm shadow-md hover:bg-gray-800 transition-colors active:scale-95"
+              >
+                C'est compris !
+              </button>
+              
+              <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
+                <input 
+                  type="checkbox" 
+                  className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 focus:ring-purple-500" 
+                  checked={dontShowAnnAgain}
+                  onChange={(e) => setDontShowAnnAgain(e.target.checked)}
+                />
+                Ne plus afficher cette annonce
+              </label>
             </div>
           </div>
         </div>
       )}
+
+      <VersusModal students={versusStudents} onClose={() => setVersusStudents(null)} />
 
       <div className={`fixed inset-0 z-[100] bg-[#fafafa] flex flex-col items-center justify-center transition-opacity duration-700 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
         <img src="https://i.pinimg.com/originals/54/58/a1/5458a14ae4c8f07055b7441ff0f234cf.gif" alt="Chargement..." className="w-32 h-32 object-contain" />
@@ -1667,7 +1699,6 @@ export default function App() {
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
           <div className="flex flex-col items-center justify-center text-center mb-4">
             
-            {/* الشعار الجديد المصمم بصيغة PNG وبدون ظل */}
             <img 
               src="/logo.png" 
               alt="Optimaths Logo" 
@@ -1998,12 +2029,12 @@ export default function App() {
                         className={`flex items-center justify-between p-3 ${isCurrentlyComparing ? 'cursor-not-allowed' : 'cursor-pointer active:bg-gray-50'}`}
                         onClick={() => { if (!isCurrentlyComparing) handleCardClick(student, isExpanded); }}
                       >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3 w-full pr-2 min-w-0">
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors shrink-0 ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
                             {isCurrentlyComparing ? <i className="fa-solid fa-lock text-xs"></i> : student.rank}
                           </div>
-                          <div>
-                            <h3 className={nameClass}>{student.name}</h3>
+                          <div className="flex-1 min-w-0">
+                            <h3 className={`${nameClass} truncate w-full`} title={student.name}>{student.name}</h3>
                             
                             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                               {student.trend > 0 && (
@@ -2035,7 +2066,7 @@ export default function App() {
                           </div>
                         </div>
                         
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 shrink-0">
                           <div className="flex items-center gap-1.5 mr-1 shrink-0">
                             {hasFire && (
                               <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '14px' }} title="Avancé de plus de 5 rangs !"></i>
