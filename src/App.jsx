@@ -115,11 +115,11 @@ const getProgressBarColor = (percentage) => {
 
 const renderPodiumName = (name) => {
   const parts = name.split(' ');
-  if (parts.length === 1) return <span className="block truncate w-full text-left">{name}</span>;
+  if (parts.length === 1) return <span className="block truncate w-full text-center">{name}</span>;
   return (
     <>
-      <span className="block truncate w-full text-left">{parts[0]}</span>
-      <span className="block truncate w-full text-left">{parts.slice(1).join(' ')}</span>
+      <span className="block truncate w-full text-center">{parts[0]}</span>
+      <span className="block truncate w-full text-center">{parts.slice(1).join(' ')}</span>
     </>
   );
 };
@@ -1571,6 +1571,13 @@ export default function App() {
         .animate-icon-pulse {
           animation: icon-pulse 2s infinite ease-in-out;
         }
+        @keyframes float-modal {
+          0%, 100% { transform: translateY(0px) scale(1); }
+          50% { transform: translateY(-4px) scale(1.01); }
+        }
+        .animate-float-modal {
+          animation: float-modal 4s ease-in-out infinite;
+        }
       `}</style>
       
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -1579,7 +1586,7 @@ export default function App() {
       {/* نافذة الإعلانات العامة (Public Announcement Modal) */}
       {showAnnouncement && announcement && announcement.isActive && !isAdmin && !isLoading && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fade-in">
-          <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
+          <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] animate-float-modal">
             <div className="bg-white rounded-[22px] p-6 relative overflow-hidden text-center">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
               
@@ -1604,11 +1611,12 @@ export default function App() {
                 <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
                   <input 
                     type="checkbox" 
-                    className="w-3.5 h-3.5 rounded border border-gray-300 bg-white text-purple-600 focus:ring-purple-500" 
+                    className="w-4 h-4 rounded border-2 border-gray-300 accent-purple-600 focus:ring-purple-500 cursor-pointer transition-colors" 
+                    style={{ backgroundColor: 'white' }}
                     checked={dontShowAnnAgain}
                     onChange={(e) => setDontShowAnnAgain(e.target.checked)}
                   />
-                  Ne plus afficher cette annonce
+                  <span className="select-none">Ne plus afficher cette annonce</span>
                 </label>
               </div>
             </div>
