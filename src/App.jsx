@@ -1540,7 +1540,7 @@ export default function App() {
             <img 
               src="/logo.png" 
               alt="Optimaths Logo" 
-              className="h-16 md:h-20 object-contain mb-1 transition-transform hover:scale-105" 
+              className="h-20 md:h-24 object-contain mb-1 transition-transform hover:scale-105" 
             />
 
             <div className="bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[10px] font-black flex items-center justify-center gap-1.5 mt-2 uppercase tracking-widest border border-green-100 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
