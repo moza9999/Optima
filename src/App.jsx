@@ -115,11 +115,11 @@ const getProgressBarColor = (percentage) => {
 
 const renderPodiumName = (name) => {
   const parts = name.split(' ');
-  if (parts.length === 1) return <span className="block truncate w-full">{name}</span>;
+  if (parts.length === 1) return <span className="block truncate w-full text-left">{name}</span>;
   return (
     <>
-      <span className="block truncate w-full">{parts[0]}</span>
-      <span className="block truncate w-full">{parts.slice(1).join(' ')}</span>
+      <span className="block truncate w-full text-left">{parts[0]}</span>
+      <span className="block truncate w-full text-left">{parts.slice(1).join(' ')}</span>
     </>
   );
 };
@@ -765,32 +765,6 @@ export default function App() {
     return () => unsubAnn();
   }, [user, db]);
 
-  const handleSaveAnnouncement = async () => {
-    if (!db) return;
-    const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
-    try {
-      await setDoc(annRef, {
-        text: adminAnnText,
-        isActive: adminAnnActive,
-        id: Date.now().toString() 
-      });
-      const btn = document.getElementById('save-ann-btn');
-      if(btn) {
-         const originalText = btn.innerHTML;
-         btn.innerHTML = '<i class="fa-solid fa-check"></i> Publié';
-         btn.classList.add('bg-green-500', 'text-white');
-         btn.classList.remove('bg-purple-100', 'text-purple-600');
-         setTimeout(() => {
-            btn.innerHTML = originalText;
-            btn.classList.remove('bg-green-500', 'text-white');
-            btn.classList.add('bg-purple-100', 'text-purple-600');
-         }, 2000);
-      }
-    } catch (e) {
-      console.error("Erreur annoncement:", e);
-    }
-  };
-
   const handleDismissAnnouncement = () => {
     if (dontShowAnnAgain && announcement) {
       localStorage.setItem('optima_hidden_ann', announcement.id);
@@ -1053,8 +1027,17 @@ export default function App() {
     if (user && db) {
       // تم استرجاع مسار البيانات الأصلي (v2) لحفظ النقاط الحقيقية
       const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
+      const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
+      
       try {
         await setDoc(docRef, { students: updatedStudents });
+        
+        // حفظ الإعلان دفعة واحدة مع حفظ بقية البيانات
+        await setDoc(annRef, {
+          text: adminAnnText,
+          isActive: adminAnnActive,
+          id: Date.now().toString() 
+        });
       } catch (e) {
         console.error("Erreur de sauvegarde:", e);
       }
@@ -1386,29 +1369,6 @@ export default function App() {
                 placeholder="Écrivez votre message ici..."
                 className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none"
               ></textarea>
-              <div className="flex gap-2">
-                <button 
-                  id="save-ann-btn"
-                  onClick={handleSaveAnnouncement}
-                  className="flex-1 py-2 bg-purple-100 text-purple-600 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
-                >
-                  <i className="fa-solid fa-paper-plane"></i> {adminAnnActive ? 'Publier et Activer' : 'Enregistrer (Inactif)'}
-                </button>
-                <button 
-                  onClick={() => {
-                    setAdminAnnText('');
-                    setAdminAnnActive(false);
-                    if (db) {
-                       const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
-                       setDoc(annRef, { text: '', isActive: false, id: Date.now().toString() });
-                    }
-                  }}
-                  className="w-10 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl flex items-center justify-center transition-colors"
-                  title="Supprimer l'annonce"
-                >
-                  <i className="fa-solid fa-trash-can"></i>
-                </button>
-              </div>
             </div>
 
             <div className="flex gap-2 relative">
@@ -1468,13 +1428,13 @@ export default function App() {
                         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-gray-50 border border-gray-200 text-gray-500 font-bold text-xs mr-3 shadow-sm shrink-0" style={{ fontFamily: "'Lato', sans-serif" }}>
                           {student.rank}
                         </div>
-                        <div className="flex-1 min-w-0">
+                        <div className="flex-1 min-w-0 text-left">
                           <input
                             type="text"
                             value={student.name}
                             onChange={(e) => updateStudentName(student.id, e.target.value)}
                             onClick={(e) => e.stopPropagation()}
-                            className="font-bold text-gray-800 text-sm w-full bg-transparent border-b border-dashed border-gray-300 focus:border-solid focus:border-purple-500 focus:outline-none transition-colors pb-0.5 truncate"
+                            className="font-bold text-gray-800 text-sm w-full bg-transparent border-b border-dashed border-gray-300 focus:border-solid focus:border-purple-500 focus:outline-none transition-colors pb-0.5 truncate text-left"
                             title="Modifier le nom de l'élève"
                           />
                           <div className="flex items-center gap-2 mt-1">
@@ -1617,41 +1577,40 @@ export default function App() {
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
       {/* نافذة الإعلانات العامة (Public Announcement Modal) */}
-      {showAnnouncement && announcement && announcement.isActive && !isAdmin && (
+      {showAnnouncement && announcement && announcement.isActive && !isAdmin && !isLoading && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fade-in">
-          <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] relative overflow-hidden text-center border border-white/20">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
-            
-            <div className="flex items-center justify-center gap-3 mb-5">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-purple-500/30 animate-icon-pulse shrink-0">
-                <i className="fa-solid fa-bullhorn text-xl"></i>
-              </div>
-              <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-indigo-600">Annonce</h2>
-            </div>
-            
-            <div className="bg-white rounded-2xl p-4 mb-5 border border-purple-50 shadow-sm">
-               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
-                 {announcement.text}
-               </p>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <button 
-                onClick={handleDismissAnnouncement}
-                className="w-full py-3.5 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity active:scale-95"
-              >
-                C'est compris
-              </button>
+          <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)]">
+            <div className="bg-white rounded-[22px] p-6 relative overflow-hidden text-center">
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
               
-              <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
-                <input 
-                  type="checkbox" 
-                  className="w-3.5 h-3.5 rounded border-gray-300 text-purple-600 focus:ring-purple-500" 
-                  checked={dontShowAnnAgain}
-                  onChange={(e) => setDontShowAnnAgain(e.target.checked)}
-                />
-                Ne plus afficher cette annonce
-              </label>
+              <div className="flex items-center justify-center gap-3 mb-5">
+                <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x">Annonce</h2>
+              </div>
+              
+              <div className="bg-purple-50/80 rounded-2xl p-4 mb-5 border border-purple-100 shadow-sm">
+                 <p className="text-sm text-purple-900 leading-relaxed whitespace-pre-wrap font-medium italic">
+                   {announcement.text}
+                 </p>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button 
+                  onClick={handleDismissAnnouncement}
+                  className="w-full py-3.5 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity active:scale-95"
+                >
+                  C'est compris
+                </button>
+                
+                <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
+                  <input 
+                    type="checkbox" 
+                    className="w-3.5 h-3.5 rounded border border-gray-300 bg-white text-purple-600 focus:ring-purple-500" 
+                    checked={dontShowAnnAgain}
+                    onChange={(e) => setDontShowAnnAgain(e.target.checked)}
+                  />
+                  Ne plus afficher cette annonce
+                </label>
+              </div>
             </div>
           </div>
         </div>
@@ -2036,7 +1995,7 @@ export default function App() {
                   if (isZero) innerClass = "rounded-2xl overflow-hidden bg-gray-50 ";
                 }
 
-                const nameClass = `font-bold text-sm pb-0.5 ${
+                const nameClass = `font-bold text-sm pb-0.5 text-left ${
                   isCurrentlyComparing ? 'text-red-400' :
                   hasBoth ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-purple-500 to-red-500 animate-gradient-x' :
                   hasFire ? 'text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 animate-gradient-x' :
@@ -2055,7 +2014,7 @@ export default function App() {
                           <div className={`flex items-center justify-center w-8 h-8 rounded-full border font-black shadow-sm text-sm transition-colors shrink-0 ${rankBadgeColor}`} style={{ fontFamily: "'Lato', sans-serif" }}>
                             {isCurrentlyComparing ? <i className="fa-solid fa-lock text-xs"></i> : student.rank}
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1 min-w-0 flex flex-col items-start text-left">
                             <h3 className={`${nameClass} truncate w-full`} title={student.name}>{student.name}</h3>
                             
                             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
