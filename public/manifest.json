@@ -1,7 +1,7 @@
 {
   "name": "Optima Leaderboard",
   "short_name": "Optima",
-  "start_url": ".",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#faf5ff",
   "theme_color": "#faf5ff",
