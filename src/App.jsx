@@ -596,6 +596,14 @@ export default function App() {
     isAdminRef.current = isAdmin;
   }, [isAdmin]);
 
+  // جلب الإعلان عند الدخول للوحة الإدارة
+  useEffect(() => {
+    if (isAdmin && announcement) {
+      setAdminAnnText(announcement.text || '');
+      setAdminAnnActive(announcement.isActive || false);
+    }
+  }, [isAdmin, announcement]);
+
   // ----------------------------------------------------------------------------------
   // خوارزمية تسجيل تتبع الجلسات والزيارات اليومية/الأسبوعية بدقة وحماية الحصة المجانية
   // ----------------------------------------------------------------------------------
@@ -736,18 +744,17 @@ export default function App() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setAnnouncement(data);
-        if (isAdminRef.current) {
-          setAdminAnnText(data.text || '');
-          setAdminAnnActive(data.isActive || false);
-        } else if (data.isActive && data.text) {
-          const hiddenId = localStorage.getItem('optima_hidden_ann');
-          if (hiddenId !== data.id) {
-            setShowAnnouncement(true);
+        if (!isAdminRef.current) {
+          if (data.isActive && data.text) {
+            const hiddenId = localStorage.getItem('optima_hidden_ann');
+            if (hiddenId !== data.id) {
+              setShowAnnouncement(true);
+            } else {
+              setShowAnnouncement(false);
+            }
           } else {
             setShowAnnouncement(false);
           }
-        } else {
-          setShowAnnouncement(false);
         }
       } else {
         if (isAdminRef.current) {
@@ -762,13 +769,11 @@ export default function App() {
     if (!db) return;
     const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
     try {
-      // نعطي id جديد عند كل حفظ ليظهر الإعلان للجميع من جديد حتى من قام بإخفاء الإعلان القديم
       await setDoc(annRef, {
         text: adminAnnText,
         isActive: adminAnnActive,
         id: Date.now().toString() 
       });
-      // إشعار بسيط بنجاح الحفظ
       const btn = document.getElementById('save-ann-btn');
       if(btn) {
          const originalText = btn.innerHTML;
@@ -1368,7 +1373,7 @@ export default function App() {
             <div className="bg-purple-50 rounded-2xl p-4 mb-4 border border-purple-100">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-purple-800 flex items-center gap-2">
-                  <i className="fa-regular fa-bullhorn"></i> Annonce Publique
+                  <i className="fa-solid fa-bullhorn"></i> Annonce Publique
                 </h3>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" checked={adminAnnActive} onChange={(e) => setAdminAnnActive(e.target.checked)} />
@@ -1381,13 +1386,29 @@ export default function App() {
                 placeholder="Écrivez votre message ici..."
                 className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none"
               ></textarea>
-              <button 
-                id="save-ann-btn"
-                onClick={handleSaveAnnouncement}
-                className="w-full py-2 bg-purple-100 text-purple-600 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
-              >
-                <i className="fa-solid fa-paper-plane"></i> Publier l'annonce
-              </button>
+              <div className="flex gap-2">
+                <button 
+                  id="save-ann-btn"
+                  onClick={handleSaveAnnouncement}
+                  className="flex-1 py-2 bg-purple-100 text-purple-600 hover:bg-purple-200 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2"
+                >
+                  <i className="fa-solid fa-paper-plane"></i> {adminAnnActive ? 'Publier et Activer' : 'Enregistrer (Inactif)'}
+                </button>
+                <button 
+                  onClick={() => {
+                    setAdminAnnText('');
+                    setAdminAnnActive(false);
+                    if (db) {
+                       const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
+                       setDoc(annRef, { text: '', isActive: false, id: Date.now().toString() });
+                    }
+                  }}
+                  className="w-10 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl flex items-center justify-center transition-colors"
+                  title="Supprimer l'annonce"
+                >
+                  <i className="fa-solid fa-trash-can"></i>
+                </button>
+              </div>
             </div>
 
             <div className="flex gap-2 relative">
@@ -1597,18 +1618,19 @@ export default function App() {
 
       {/* نافذة الإعلانات العامة (Public Announcement Modal) */}
       {showAnnouncement && announcement && announcement.isActive && !isAdmin && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-[200] p-4 animate-fade-in">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fade-in">
           <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] relative overflow-hidden text-center border border-white/20">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
             
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white shadow-lg shadow-purple-500/30 animate-icon-pulse">
-              <i className="fa-regular fa-bullhorn text-2xl"></i>
+            <div className="flex items-center justify-center gap-3 mb-5">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-purple-500/30 animate-icon-pulse shrink-0">
+                <i className="fa-solid fa-bullhorn text-xl"></i>
+              </div>
+              <h2 className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-br from-purple-500 to-indigo-600">Annonce</h2>
             </div>
             
-            <h2 className="text-xl font-black text-gray-800 mb-3">Annonce !</h2>
-            
-            <div className="bg-gray-50 rounded-2xl p-4 mb-5 border border-gray-100">
-               <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap font-medium">
+            <div className="bg-white rounded-2xl p-4 mb-5 border border-purple-50 shadow-sm">
+               <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">
                  {announcement.text}
                </p>
             </div>
@@ -1616,9 +1638,9 @@ export default function App() {
             <div className="flex flex-col gap-3">
               <button 
                 onClick={handleDismissAnnouncement}
-                className="w-full py-3.5 bg-gray-900 text-white rounded-xl font-bold text-sm shadow-md hover:bg-gray-800 transition-colors active:scale-95"
+                className="w-full py-3.5 bg-gradient-to-br from-purple-500 to-indigo-600 text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity active:scale-95"
               >
-                C'est compris !
+                C'est compris
               </button>
               
               <label className="flex items-center justify-center gap-2 text-xs text-gray-500 cursor-pointer hover:text-gray-700 transition-colors mt-1">
