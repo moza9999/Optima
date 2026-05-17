@@ -148,7 +148,7 @@ const PodiumMedal = ({ rank, defaultIcon }) => {
   return <i className={defaultIcon}></i>;
 };
 
-// مكون التفاصيل مع مبيان الرادار البنفسجي والأرقام الملونة موحدة التطابق
+// مكون التفاصيل مع مبيان الرادار البنفسجي والأرقام الملونة
 const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
   const [viewMode, setViewMode] = useState('list'); 
 
@@ -578,7 +578,7 @@ export default function App() {
   // خوارزمية تسجيل تتبع الجلسات والزيارات اليومية/الأسبوعية بدقة وحماية الحصة المجانية
   // ----------------------------------------------------------------------------------
   useEffect(() => {
-    if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
+    if (!user || !db) return; 
     
     let sessionId = sessionStorage.getItem('optima_session_id');
     if (!sessionId) {
@@ -704,34 +704,37 @@ export default function App() {
     return () => unsubscribeCounters();
   }, [user, isAdmin, db]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: 'instant' });
-    if (!isAdmin) {
-      setIsSticky(false);
-    }
-  }, [isAdmin]);
-
+  // ----------------------------------------------------------------------------------
+  // التحكم المباشر والدقيق في العداد الصغير على الهواتف باستخدام مراقب التمرير
+  // ----------------------------------------------------------------------------------
   useEffect(() => {
     if (isAdmin) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsSticky(!entry.isIntersecting);
-      },
-      { threshold: 0 } 
-    );
+    // استخدمنا حدث التمرير المباشر بدلاً من IntersectionObserver لأنه أدق بكثير على شاشات الهواتف
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const bottom = headerRef.current.getBoundingClientRect().bottom;
+        // إذا كان أسفل الهيدر على بُعد 80 بكسل أو أقل من أعلى الشاشة، يظهر العداد الصغير
+        setIsSticky(bottom < 80);
+      }
+    };
 
-    if (headerRef.current) {
-      observer.observe(headerRef.current);
-    }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // استدعاء أولي
 
     return () => {
-      observer.disconnect();
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [isAdmin]);
 
   const handleListScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
+    
+    // ضمان إظهار العداد الصغير إذا بدأ التلميذ بتمرير اللائحة الداخلية
+    if (scrollTop > 10 && !isSticky) {
+       setIsSticky(true);
+    }
+
     if (scrollHeight - scrollTop - clientHeight < 250) {
       setVisibleCount(prev => {
         if (prev < students.length) {
@@ -741,6 +744,13 @@ export default function App() {
       });
     }
   };
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    if (!isAdmin) {
+      setIsSticky(false);
+    }
+  }, [isAdmin]);
 
   useEffect(() => {
     const currentYear = new Date().getFullYear();
