@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'firebase/auth';
-import { getFirestore, doc, setDoc, onSnapshot, collection, query, where, runTransaction } from 'firebase/firestore';
+import { getFirestore, doc, setDoc, onSnapshot, collection, runTransaction } from 'firebase/firestore';
 
 // Base de données des leçons
 const LESSONS = [
@@ -148,7 +148,7 @@ const PodiumMedal = ({ rank, defaultIcon }) => {
   return <i className={defaultIcon}></i>;
 };
 
-// مكون التفاصيل مع مبيان الرادار البنفسجي والأرقام الملونة
+// مكون التفاصيل مع مبيان الرادار البنفسجي والأرقام الملونة موحدة التطابق
 const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
   const [viewMode, setViewMode] = useState('list'); 
 
@@ -578,7 +578,7 @@ export default function App() {
   // خوارزمية تسجيل تتبع الجلسات والزيارات اليومية/الأسبوعية بدقة وحماية الحصة المجانية
   // ----------------------------------------------------------------------------------
   useEffect(() => {
-    if (!user || !db) return; 
+    if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
     
     let sessionId = sessionStorage.getItem('optima_session_id');
     if (!sessionId) {
@@ -710,17 +710,15 @@ export default function App() {
   useEffect(() => {
     if (isAdmin) return;
 
-    // استخدمنا حدث التمرير المباشر بدلاً من IntersectionObserver لأنه أدق بكثير على شاشات الهواتف
     const handleScroll = () => {
       if (headerRef.current) {
         const bottom = headerRef.current.getBoundingClientRect().bottom;
-        // إذا كان أسفل الهيدر على بُعد 80 بكسل أو أقل من أعلى الشاشة، يظهر العداد الصغير
         setIsSticky(bottom < 80);
       }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    handleScroll(); // استدعاء أولي
+    handleScroll(); 
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -730,7 +728,6 @@ export default function App() {
   const handleListScroll = (e) => {
     const { scrollTop, scrollHeight, clientHeight } = e.target;
     
-    // ضمان إظهار العداد الصغير إذا بدأ التلميذ بتمرير اللائحة الداخلية
     if (scrollTop > 10 && !isSticky) {
        setIsSticky(true);
     }
@@ -1099,7 +1096,7 @@ export default function App() {
 
               <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
                 
-                {/* تبويب الدروس - تحديث الخطوط والأحجام لتطابق الواجهة وحذف الأيقونات */}
+                {/* تبويب الدروس */}
                 {statsTab === 'lessons' && (
                   <div className="space-y-3">
                     {lessonStats.map((lesson, index) => (
@@ -1204,7 +1201,7 @@ export default function App() {
 
         {showCancelConfirm && (
           <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in">
-            <div className="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl text-center">
+            <div className="bg-white rounded-3xl p-6 w-full max-sm shadow-2xl text-center">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3 text-red-500">
                 <i className="fa-solid fa-triangle-exclamation text-xl"></i>
               </div>
@@ -1538,9 +1535,14 @@ export default function App() {
       <div ref={headerRef} className="max-w-md mx-auto px-4 pt-8 pb-0">
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
           <div className="flex flex-col items-center justify-center text-center mb-4">
-            <h1 className="text-6xl font-normal text-purple-600 tracking-widest drop-shadow-sm" style={{ fontFamily: "'Bitcount', 'Bebas Neue', sans-serif" }}>
-              OPTIMA
-            </h1>
+            
+            {/* الشعار الجديد المصمم بصيغة PNG وبدون ظل */}
+            <img 
+              src="/logo.png" 
+              alt="Optimaths Logo" 
+              className="h-12 md:h-14 object-contain mb-1 transition-transform hover:scale-105" 
+            />
+
             <div className="bg-green-50 text-green-600 px-3 py-1.5 rounded-full text-[10px] font-black flex items-center justify-center gap-1.5 mt-2 uppercase tracking-widest border border-green-100 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
               <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
               {liveOnline} Élève{liveOnline > 1 ? 's' : ''} en ligne
@@ -1764,6 +1766,19 @@ export default function App() {
                     </div>
                   </div>
                   )}
+                </div>
+
+                <div className="w-full relative z-50">
+                  {podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(student => (
+                    <div 
+                      key={`podium-${student.id}`} 
+                      className={`absolute top-0 left-0 w-full grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${expandedId === student.id ? 'grid-rows-[1fr] opacity-100 pointer-events-auto' : 'grid-rows-[0fr] opacity-0 pointer-events-none'}`}
+                    >
+                      <div className="overflow-hidden">
+                        <ProgressDetails student={student} isPodium={true} onCompare={() => startComparison(student)} />
+                      </div>
+                    </div>
+                  ))}
                 </div>
 
               </>
