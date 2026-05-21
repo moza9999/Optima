@@ -16,48 +16,53 @@ const LESSONS = [
 
 const now = Date.now();
 
+// دالة لتوليد كائن إنجازات فارغ لكل تلميذ
+const p = () => ({ eq: {}, vec: {}, geo: {}, sys: {}, fon: {}, sta: {}, esp: {} });
+
+// اللائحة الحقيقية والصحيحة جاهزة للانطلاق الفعلي
 const INITIAL_STUDENTS = [
-  { id: 1, name: 'Ait El Fatimi Ghali', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 2, name: 'Ouzgoumouz Saad', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 3, name: 'Bouchehab Mohamed', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 4, name: 'Afgourne Hasna', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 5, name: 'Moussaoui Driss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 6, name: 'Bourza Aya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 7, name: 'Ennajibi Sara', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 8, name: 'Bouchfira Roumaissa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 9, name: 'Ait Izzi Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 10, name: 'Azzab Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 11, name: 'Ben Loktib Larbi', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 12, name: 'Hassan Hajar', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 13, name: 'Errabhi Ayman', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 14, name: 'Ndali Reda', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 15, name: 'Kaarir Ouaiss', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 16, name: 'Kamrate Israe', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 17, name: 'Hamdi Fatima Ezzahra', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 18, name: 'Aid Yahya', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 19, name: 'Afgourne Amina', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 20, name: 'El Hamidi Anouar', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 21, name: 'Ait El Kias Amira', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 22, name: 'Lehbal Badr', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 23, name: 'Touil Zakaria', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 24, name: 'Mkder Rayane', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 25, name: 'Idahia Rayane', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 26, name: 'Khallal Mohsine', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 27, name: 'Mkder Ines', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 28, name: 'El Asfar Meryem', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 29, name: 'Belhouria Ali', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 30, name: 'Sass Lina', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 31, name: 'Benayd Mayssa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 32, name: 'Mokri Jihane', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 33, name: 'Lemlioui Adam', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 34, name: 'Belkergour Hafsa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 35, name: 'Bouchrahil Farah', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 36, name: 'Boussal Khadija', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 37, name: 'El Amrani Hafsa', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 38, name: 'El Mohtaker Amine', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 39, name: 'Ouassou Zineb', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 40, name: 'El Joudi Abdennour', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } },
-  { id: 41, name: 'El Abbassi Larbi', trend: 0, recentProgress: 0, progress: { eq: 0, vec: 0, geo: 0, sys: 0, fon: 0, sta: 0, esp: 0 } }
+  { id: 1, name: 'Ait El Fatmi Ghali', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 2, name: 'Ouzagmouz Saad', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 3, name: 'Bouchehab Mohamed', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 4, name: 'Ifkirne Hasna', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 5, name: 'Moussaoui Idriss', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 6, name: 'Bourazza Aya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 7, name: 'Njibi Sara', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 8, name: 'Bouchfira Roumayssae', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 9, name: 'Ait Izzi Yahya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 10, name: 'Azzab Yahya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 11, name: 'Benaktibe Elarabi', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 12, name: 'Hassan Hajar', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 13, name: 'Rabihi Aymane', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 14, name: 'Nidali Reda', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 15, name: 'Kaarir Aouyes', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 16, name: 'Kamarat Israae', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 17, name: 'Hamdy Fatima Ezzahra', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 18, name: 'Aidi Yahia', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 19, name: 'Ifkirne Amina', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 20, name: 'Yahya Elhmidi', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  { id: 21, name: 'Ait El Kayass Amira', group: 'A', trend: 0, recentProgress: 0, progress: p() },
+  
+  { id: 22, name: 'Lahbal Badr', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 23, name: 'Touil Zakaria', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 24, name: 'Magder Rayane', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 25, name: 'Idyhya Rayan', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 26, name: 'Khalal Mohsine', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 27, name: 'Magder Inas', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 28, name: 'Sfar Meriam', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 29, name: 'Belhouria Ali', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 30, name: 'Sas Lina', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 31, name: 'Benaid Maissaa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 32, name: 'Magri Jihane', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 33, name: 'Lamlioui Adam', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 34, name: 'Belkarkour Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 35, name: 'Bouchrahil Farah', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 36, name: 'Boussal Khadija', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 37, name: 'El Amrani Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 38, name: 'Elmouhtakir Amine', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 39, name: 'Ouassou Zainab', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 40, name: 'Eljoudi Abdennour', group: 'B', trend: 0, recentProgress: 0, progress: p() },
+  { id: 41, name: 'El Abassi Larbi', group: 'B', trend: 0, recentProgress: 0, progress: p() }
 ];
 
 const MY_FIREBASE_CONFIG = {
@@ -87,10 +92,34 @@ try {
   console.error("Erreur Firebase:", e);
 }
 
-const calculateTotal = (progress) => Object.values(progress).reduce((a, b) => a + b, 0);
+const getLessonScore = (progress, lessonId) => {
+  if (!progress) return 0;
+  const lessonProg = progress[lessonId];
+  if (typeof lessonProg === 'number') return lessonProg; 
+  if (typeof lessonProg === 'object' && lessonProg !== null) {
+    let count = 0;
+    for (const key in lessonProg) {
+      if (lessonProg[key] === 1) count++; 
+    }
+    return count;
+  }
+  return 0;
+};
+
+const calculateTotal = (progress) => {
+  if (!progress) return 0;
+  let total = 0;
+  for (const lessonKey in progress) {
+    total += getLessonScore(progress, lessonKey);
+  }
+  return total;
+};
 
 const calculateCompletedLessons = (progress) => {
-  return LESSONS.reduce((count, lesson) => count + (progress[lesson.id] === lesson.total ? 1 : 0), 0);
+  return LESSONS.reduce((count, lesson) => {
+    const score = getLessonScore(progress, lesson.id);
+    return count + (score === lesson.total ? 1 : 0);
+  }, 0);
 };
 
 const getScoreColorBadge = (score) => {
@@ -113,14 +142,32 @@ const getProgressBarColor = (percentage) => {
   return 'bg-green-500';
 };
 
-const renderPodiumName = (name) => {
-  const parts = name.split(' ');
-  if (parts.length === 1) return <span className="block truncate w-full text-center">{name}</span>;
+const GroupBadge = ({ group }) => {
+  if (!group) return null;
   return (
-    <>
+    <span className="ml-1.5 px-1.5 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded uppercase tracking-widest shrink-0" style={{ fontFamily: "'Lato', sans-serif" }}>
+      {group}
+    </span>
+  );
+};
+
+const renderPodiumName = (student) => {
+  if (!student || !student.name) return <span className="block truncate w-full text-center">---</span>;
+  const parts = student.name.split(' ');
+  if (parts.length === 1) return (
+    <span className="flex items-center justify-center w-full">
+      <span className="truncate">{student.name}</span>
+      <GroupBadge group={student.group} />
+    </span>
+  );
+  return (
+    <div className="flex flex-col items-center w-full">
       <span className="block truncate w-full text-center">{parts[0]}</span>
-      <span className="block truncate w-full text-center">{parts.slice(1).join(' ')}</span>
-    </>
+      <span className="flex items-center justify-center w-full">
+        <span className="truncate">{parts.slice(1).join(' ')}</span>
+        <GroupBadge group={student.group} />
+      </span>
+    </div>
   );
 };
 
@@ -149,9 +196,9 @@ const PodiumMedal = ({ rank, defaultIcon }) => {
   return <i className={defaultIcon}></i>;
 };
 
-// مكون التفاصيل مع مبيان الرادار البنفسجي والأرقام الملونة موحدة التطابق
 const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
   const [viewMode, setViewMode] = useState('list'); 
+  const [activeLesson, setActiveLesson] = useState(null);
 
   if (!student || student.isTie || student.isEmpty) return null;
 
@@ -166,7 +213,8 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
 
   const radarData = LESSONS.map((lesson, i) => {
     const angle = -Math.PI / 2 + (2 * Math.PI * i / LESSONS.length);
-    const value = (student.progress[lesson.id] || 0) / lesson.total;
+    const score = getLessonScore(student.progress, lesson.id);
+    const value = score / lesson.total;
     
     let anchor = "middle";
     const labelX = center + (maxRadius + 14) * Math.cos(angle);
@@ -182,6 +230,7 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
       ...lesson,
       shortName: shortNames[lesson.id],
       value,
+      score,
       x: center + maxRadius * value * Math.cos(angle),
       y: center + maxRadius * value * Math.sin(angle),
       labelX, labelY: center + (maxRadius + 12) * Math.sin(angle),
@@ -212,40 +261,72 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
 
   return (
     <div className={`${isPodium ? `bg-white rounded-2xl ${podiumBorderClass} mt-2 overflow-hidden` : 'border-t border-gray-100 overflow-hidden rounded-b-2xl'}`}>
-      
       <div className="relative w-full overflow-hidden bg-gray-50/50">
         <div 
           className="flex transition-transform duration-500 ease-in-out items-stretch" 
           style={{ width: '200%', transform: viewMode === 'radar' ? 'translateX(-50%)' : 'translateX(0)' }}
         >
-          {/* الجانب الأيسر: اللائحة الملونة */}
-          <div className="w-1/2 flex flex-col justify-center">
+          <div className="w-1/2 flex flex-col max-h-[300px] overflow-y-auto smooth-scroll no-scrollbar bg-white">
             {LESSONS.map((lesson, index) => {
-              const completed = student.progress[lesson.id] || 0;
+              const completed = getLessonScore(student.progress, lesson.id);
               const isFinished = completed === lesson.total;
-              const bgClass = index % 2 === 0 ? 'bg-transparent' : 'bg-white';
+              const bgClass = index % 2 === 0 ? 'bg-gray-50/30' : 'bg-white';
               
               const value = completed / lesson.total;
               let textColorClass = "text-red-500";
               if (value >= 0.8) textColorClass = "text-green-500";
               else if (value >= 0.4) textColorClass = "text-orange-500";
 
+              const isLessonExp = activeLesson === lesson.id;
+
               return (
-                <div key={lesson.id} className={`flex justify-between items-center px-4 py-1.5 ${bgClass}`}>
-                  <span className="text-gray-600 font-medium text-[11px] truncate mr-2">
-                    {lesson.name}
-                  </span>
-                  <div className="flex items-center shrink-0 min-w-[40px] justify-end">
-                    <span 
-                      className={`text-[11px] font-bold ${textColorClass}`}
-                      style={{ fontFamily: "'Lato', sans-serif" }}
-                    >
-                      {completed}/{lesson.total}
+                <div key={lesson.id} className={`flex flex-col border-b border-gray-50 last:border-0 ${bgClass}`}>
+                  <div 
+                    onClick={() => setActiveLesson(isLessonExp ? null : lesson.id)}
+                    className="flex justify-between items-center px-4 py-2.5 cursor-pointer hover:bg-gray-50/80 transition-colors"
+                  >
+                    <span className="text-gray-600 font-bold text-[11px] truncate mr-2">
+                      {lesson.name}
                     </span>
-                    <div className={`w-3 flex justify-end transition-opacity duration-300 ${isFinished ? 'opacity-100' : 'opacity-0'}`}>
-                      <i className="fa-solid fa-star text-yellow-400 text-[9px]"></i>
+                    <div className="flex items-center shrink-0 min-w-[40px] justify-end">
+                      <span className={`text-[11px] font-black ${textColorClass}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                        {completed}/{lesson.total}
+                      </span>
+                      <i className={`fa-solid fa-chevron-down text-gray-400 text-[9px] ml-2 transition-transform duration-300 ${isLessonExp ? 'rotate-180 text-purple-500' : ''}`}></i>
                     </div>
                   </div>
+                  
+                  {isLessonExp && (
+                    <div className="px-3 py-2 bg-gray-50/50 border-t border-gray-100 grid grid-cols-4 sm:grid-cols-5 gap-1.5 shadow-inner">
+                      {Array.from({ length: lesson.total }).map((_, i) => {
+                        const exNum = i + 1;
+                        let currentProg = student.progress[lesson.id];
+                        if (typeof currentProg !== 'object' || currentProg === null) currentProg = {};
+                        const currentStatus = currentProg[exNum] || 0;
+                        
+                        let iconClass = "fa-regular fa-circle text-gray-300";
+                        let bgBtnClass = "bg-white border-gray-200";
+                        
+                        if (currentStatus === 1) { 
+                          iconClass = "fa-solid fa-circle-check text-green-500"; 
+                          bgBtnClass = "bg-green-50 border-green-200"; 
+                        } else if (currentStatus === 2) { 
+                          iconClass = "fa-solid fa-circle-minus text-blue-500"; 
+                          bgBtnClass = "bg-blue-50 border-blue-200"; 
+                        } else if (currentStatus === 3) { 
+                          iconClass = "fa-solid fa-circle-xmark text-red-500"; 
+                          bgBtnClass = "bg-red-50 border-red-200"; 
+                        }
+
+                        return (
+                          <div key={exNum} className={`flex flex-col items-center justify-center py-1.5 rounded-lg border shadow-sm ${bgBtnClass}`}>
+                            <span className="text-[10px] font-black text-gray-500 mb-1 uppercase tracking-wider" style={{ fontFamily: "'Lato', sans-serif" }}>Ex {exNum}</span>
+                            <i className={`${iconClass} text-sm drop-shadow-sm`}></i>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               );
             })}
@@ -268,7 +349,7 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
                       {d.shortName}
                     </text>
                     <text x={d.labelX} y={d.labelY + 6} textAnchor={d.anchor} dominantBaseline="middle" fontSize="9" fontWeight="bold" fill={`rgb(${d.colorStr})`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                      {student.progress[d.id]}/{d.total}
+                      {d.score}/{d.total}
                     </text>
                   </g>
                 ))}
@@ -302,7 +383,108 @@ const ProgressDetails = ({ student, isPodium = false, onCompare }) => {
   );
 };
 
-// نافذة المقارنة الملحمية الرادار المزدوج (Versus Arena)
+const GroupRaceModal = ({ isOpen, students, onClose }) => {
+  if (!isOpen || !students) return null;
+
+  const groupA = students.filter(s => s.group === 'A' || !s.group);
+  const groupB = students.filter(s => s.group === 'B');
+
+  const getStats = (group) => {
+    return LESSONS.map(lesson => {
+      const maxPossible = group.length * lesson.total;
+      let correctCount = 0;
+      group.forEach(s => {
+        correctCount += getLessonScore(s.progress, lesson.id);
+      });
+      const correctPct = maxPossible === 0 ? 0 : (correctCount / maxPossible) * 100;
+      const restPct = 100 - correctPct;
+      return { id: lesson.id, name: lesson.name, icon: lesson.icon, correctPct, restPct, correctCount, maxPossible };
+    });
+  };
+
+  const statsA = getStats(groupA);
+  const statsB = getStats(groupB);
+
+  let winsA = 0;
+  let winsB = 0;
+  LESSONS.forEach(lesson => {
+    const aPct = statsA.find(s => s.id === lesson.id).correctPct;
+    const bPct = statsB.find(s => s.id === lesson.id).correctPct;
+    if (aPct > bPct) winsA++;
+    else if (bPct > aPct) winsB++;
+  });
+
+  return (
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[120] p-4 animate-fade-in" onClick={onClose}>
+      <div className="bg-white rounded-3xl p-5 w-full max-w-sm shadow-[0_10px_40px_rgba(79,70,229,0.3)] border-2 border-indigo-500 relative flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+        <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors z-10">
+          <i className="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div className="text-center mb-2 mt-2 shrink-0">
+          <h2 className="text-lg font-black text-gray-800 uppercase tracking-wide flex items-center justify-center gap-2 mb-2">
+             <i className="fa-solid fa-flag-checkered text-indigo-500"></i> Bataille des Groupes
+          </h2>
+          <div className="flex justify-center items-center gap-6 mt-3 mb-2">
+             <div className="flex flex-col items-center">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Groupe A</span>
+                <div className="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-3xl font-black text-purple-600 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsA}</div>
+             </div>
+             <div className="text-2xl font-black text-gray-300 mt-4">VS</div>
+             <div className="flex flex-col items-center">
+                <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Groupe B</span>
+                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-3xl font-black text-blue-600 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsB}</div>
+             </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto no-scrollbar smooth-scroll pb-2 border-t border-gray-100 pt-4">
+          <div className="space-y-4">
+            {LESSONS.map((lesson) => {
+              const a = statsA.find(s => s.id === lesson.id);
+              const b = statsB.find(s => s.id === lesson.id);
+              const aWins = a.correctPct > b.correctPct;
+              const bWins = b.correctPct > a.correctPct;
+              
+              return (
+                <div key={lesson.id} className="bg-gray-50/50 border border-gray-200 p-3 rounded-2xl shadow-sm">
+                  <div className="text-xs font-bold text-gray-700 mb-3 flex items-center justify-center gap-1.5 pb-2 border-b border-gray-200">
+                    <span className="opacity-80">{lesson.icon}</span> {lesson.name}
+                  </div>
+                  
+                  <div className="flex flex-col gap-2">
+                    <div className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${aWins ? 'bg-green-50 border border-green-400 shadow-sm' : 'border border-transparent'}`}>
+                      <div className={`w-8 text-[11px] font-black rounded text-center py-1 shrink-0 ${aWins ? 'text-green-700 bg-green-200/50' : 'text-purple-600 bg-purple-100 shadow-sm'}`}>Gr A</div>
+                      <div className="flex-1 h-4 flex rounded-full overflow-hidden bg-gray-200 shadow-inner">
+                        <div style={{ width: `${a.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out flex items-center justify-start overflow-hidden">
+                           {a.correctPct >= 15 && <span className="text-[8px] text-white/90 font-bold ml-1.5"><i className="fa-solid fa-check"></i></span>}
+                        </div>
+                        <div style={{ width: `${a.restPct}%` }} className="h-full bg-gray-200 border-l border-white/50 transition-all duration-1000 ease-out"></div>
+                      </div>
+                      <div className={`w-9 text-right font-black text-[11px] ${aWins ? 'text-green-700' : 'text-gray-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>{a.correctPct.toFixed(0)}%</div>
+                    </div>
+
+                    <div className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${bWins ? 'bg-green-50 border border-green-400 shadow-sm' : 'border border-transparent'}`}>
+                      <div className={`w-8 text-[11px] font-black rounded text-center py-1 shrink-0 ${bWins ? 'text-green-700 bg-green-200/50' : 'text-blue-600 bg-blue-100 shadow-sm'}`}>Gr B</div>
+                      <div className="flex-1 h-4 flex rounded-full overflow-hidden bg-gray-200 shadow-inner">
+                        <div style={{ width: `${b.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out flex items-center justify-start overflow-hidden">
+                           {b.correctPct >= 15 && <span className="text-[8px] text-white/90 font-bold ml-1.5"><i className="fa-solid fa-check"></i></span>}
+                        </div>
+                        <div style={{ width: `${b.restPct}%` }} className="h-full bg-gray-200 border-l border-white/50 transition-all duration-1000 ease-out"></div>
+                      </div>
+                      <div className={`w-9 text-right font-black text-[11px] ${bWins ? 'text-green-700' : 'text-gray-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>{b.correctPct.toFixed(0)}%</div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const VersusModal = ({ students, onClose }) => {
   const [viewMode, setViewMode] = useState('radar');
 
@@ -320,8 +502,10 @@ const VersusModal = ({ students, onClose }) => {
 
   const radarData = LESSONS.map((lesson, i) => {
     const angle = -Math.PI / 2 + (2 * Math.PI * i / LESSONS.length);
-    const v1 = (s1.progress[lesson.id] || 0) / lesson.total;
-    const v2 = (s2.progress[lesson.id] || 0) / lesson.total;
+    const score1 = getLessonScore(s1.progress, lesson.id);
+    const score2 = getLessonScore(s2.progress, lesson.id);
+    const v1 = score1 / lesson.total;
+    const v2 = score2 / lesson.total;
 
     let anchor = "middle";
     const labelX = center + (maxRadius + 16) * Math.cos(angle);
@@ -331,6 +515,7 @@ const VersusModal = ({ students, onClose }) => {
     return {
       ...lesson,
       shortName: shortNames[lesson.id],
+      score1, score2,
       x1: center + maxRadius * v1 * Math.cos(angle),
       y1: center + maxRadius * v1 * Math.sin(angle),
       x2: center + maxRadius * v2 * Math.cos(angle),
@@ -383,13 +568,12 @@ const VersusModal = ({ students, onClose }) => {
         <div className="mb-5 mt-2">
           <div className="flex justify-between items-start px-1">
             
-            {/* بيانات التلميذ الأول (البنفسجي) */}
             <div className="flex flex-col items-center w-[42%]">
               <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center font-black text-xl mb-1.5 shadow-sm border-2 border-white relative">
                  {s1.rank}
                  <div className="absolute -bottom-1 w-full flex justify-center"><div className="w-4 h-4 bg-purple-500 rounded-full border-2 border-white"></div></div>
               </div>
-              <span className={s1Deco.nameClass}>{s1.name}</span>
+              <span className={s1Deco.nameClass}>{renderPodiumName(s1)}</span>
               
               <div className="flex items-center justify-center gap-1.5 mt-1 w-full px-1">
                 <div className="flex items-center gap-1">
@@ -416,7 +600,6 @@ const VersusModal = ({ students, onClose }) => {
               </div>
             </div>
 
-            {/* أيقونة VS */}
             <div className="flex-1 flex justify-center pt-4 relative">
                <div className="absolute w-px h-16 bg-gray-100"></div>
                <div className="bg-white p-2 rounded-full z-10 shadow-sm border border-gray-50 mt-1">
@@ -424,13 +607,12 @@ const VersusModal = ({ students, onClose }) => {
                </div>
             </div>
 
-            {/* بيانات التلميذ الثاني (الأخضر) */}
             <div className="flex flex-col items-center w-[42%]">
               <div className="w-12 h-12 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-black text-xl mb-1.5 shadow-sm border-2 border-white relative">
                  {s2.rank}
                  <div className="absolute -bottom-1 w-full flex justify-center"><div className="w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div></div>
               </div>
-              <span className={s2Deco.nameClass}>{s2.name}</span>
+              <span className={s2Deco.nameClass}>{renderPodiumName(s2)}</span>
               
               <div className="flex items-center justify-center gap-1.5 mt-1 w-full px-1">
                 <div className="flex items-center gap-1">
@@ -460,11 +642,9 @@ const VersusModal = ({ students, onClose }) => {
           </div>
         </div>
 
-        {/* الحاوية المنزلقة للمقارنة */}
         <div className="relative w-full overflow-hidden bg-gray-50/50 rounded-2xl border border-gray-100">
           <div className="flex transition-transform duration-500 ease-in-out items-stretch" style={{ width: '200%', transform: viewMode === 'table' ? 'translateX(-50%)' : 'translateX(0)' }}>
 
-            {/* 1. المبيان المزدوج البنفسجي والأخضر */}
             <div className="w-1/2 flex items-center justify-center py-5 px-2">
               <div className="w-full max-w-[280px] aspect-square relative">
                 <svg viewBox={`0 0 ${size} ${size}`} className="w-full h-full overflow-visible drop-shadow-sm">
@@ -473,13 +653,9 @@ const VersusModal = ({ students, onClose }) => {
                     <line key={`axis-${i}`} x1={center} y1={center} x2={d.axisEndX} y2={d.axisEndY} stroke="#e5e7eb" strokeWidth="1.5" strokeDasharray="3 3" />
                   ))}
                   
-                  {/* مضلع المنافس (أخضر) */}
                   <polygon points={poly2} fill="rgba(34, 197, 94, 0.3)" stroke="#22c55e" strokeWidth="1.5" className="transition-all duration-700 ease-out" />
-                  
-                  {/* مضلع البطل (بنفسجي) */}
                   <polygon points={poly1} fill="rgba(168, 85, 247, 0.4)" stroke="#a855f7" strokeWidth="1.5" className="transition-all duration-700 ease-out" />
 
-                  {/* النقط */}
                   {radarData.map((d, i) => (
                     <g key={`dots-${i}`}>
                        <circle cx={d.x2} cy={d.y2} r="2.5" fill="#fff" stroke="#22c55e" strokeWidth="1.5" />
@@ -487,16 +663,15 @@ const VersusModal = ({ students, onClose }) => {
                     </g>
                   ))}
 
-                  {/* التسميات */}
                   {radarData.map((d, i) => (
                     <g key={`label-${i}`}>
                       <text x={d.labelX} y={d.labelY - 7} textAnchor={d.anchor} dominantBaseline="middle" fontSize="10" fontWeight="bold" fill="#4b5563">
                         {d.shortName}
                       </text>
                       <text x={d.labelX} y={d.labelY + 7} textAnchor={d.anchor} dominantBaseline="middle" fontSize="12" fontWeight="900" style={{ fontFamily: "'Lato', sans-serif" }}>
-                        <tspan fill="#a855f7">{s1.progress[d.id] || 0}</tspan>
+                        <tspan fill="#a855f7">{d.score1}</tspan>
                         <tspan fill="#9ca3af" fontSize="9"> x </tspan>
-                        <tspan fill="#22c55e">{s2.progress[d.id] || 0}</tspan>
+                        <tspan fill="#22c55e">{d.score2}</tspan>
                       </text>
                     </g>
                   ))}
@@ -504,22 +679,21 @@ const VersusModal = ({ students, onClose }) => {
               </div>
             </div>
 
-            {/* 2. جدول المقارنة التفصيلي */}
             <div className="w-1/2 flex flex-col justify-center bg-white p-2">
-               {LESSONS.map((lesson, idx) => {
-                  const v1 = s1.progress[lesson.id] || 0;
-                  const v2 = s2.progress[lesson.id] || 0;
+               {radarData.map((d, idx) => {
+                  const v1 = d.score1;
+                  const v2 = d.score2;
                   const isTie = v1 === v2;
                   const s1Wins = v1 > v2;
                   const s2Wins = v2 > v1;
                   const bgClass = idx % 2 === 0 ? 'bg-gray-50/50' : 'bg-white';
                   
                   return (
-                     <div key={lesson.id} className={`flex justify-between items-center py-2 px-1 rounded ${bgClass}`}>
+                     <div key={d.id} className={`flex justify-between items-center py-2 px-1 rounded ${bgClass}`}>
                         <div className={`w-8 text-center font-bold text-[11px] ${s1Wins ? 'text-purple-600 bg-purple-100 rounded' : isTie ? 'text-gray-400' : 'text-gray-300'}`}>{v1}</div>
                         <div className="flex-1 flex justify-center items-center gap-1">
                            {s1Wins && <i className="fa-solid fa-caret-left text-purple-400 text-[10px]"></i>}
-                           <span className="text-[10px] text-gray-500 font-bold truncate max-w-[100px] text-center">{lesson.name}</span>
+                           <span className="text-[10px] text-gray-500 font-bold truncate max-w-[100px] text-center">{d.name}</span>
                            {s2Wins && <i className="fa-solid fa-caret-right text-green-500 text-[10px]"></i>}
                         </div>
                         <div className={`w-8 text-center font-bold text-[11px] ${s2Wins ? 'text-green-600 bg-green-100 rounded' : isTie ? 'text-gray-400' : 'text-gray-300'}`}>{v2}</div>
@@ -531,7 +705,6 @@ const VersusModal = ({ students, onClose }) => {
           </div>
         </div>
 
-        {/* أزرار التبديل للمقارنة */}
         <div className="flex gap-2 mt-4 bg-gray-100 p-1 rounded-xl">
            <button onClick={() => setViewMode('radar')} className={`flex-1 py-2 rounded-lg font-bold text-[11px] flex items-center justify-center gap-1.5 transition-all shadow-sm ${viewMode === 'radar' ? 'bg-white text-gray-800' : 'bg-transparent text-gray-400 shadow-none'}`}>
               <i className="fa-solid fa-chart-pie text-[13px]"></i> Diagramme
@@ -554,6 +727,7 @@ export default function App() {
   const [expandedId, setExpandedId] = useState(null);
   const [comparingStudent, setComparingStudent] = useState(null); 
   const [versusStudents, setVersusStudents] = useState(null); 
+  const [showGroupRace, setShowGroupRace] = useState(false); 
   
   const [showLogin, setShowLogin] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -561,15 +735,19 @@ export default function App() {
   const [loginError, setLoginError] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [adminExpandedId, setAdminExpandedId] = useState(null);
+  const [adminActiveLesson, setAdminActiveLesson] = useState(null);
   const [adminSortDesc, setAdminSortDesc] = useState(true); 
   
-  // Announcement States
   const [announcement, setAnnouncement] = useState(null);
   const [showAnnouncement, setShowAnnouncement] = useState(false);
   const [adminAnnText, setAdminAnnText] = useState('');
   const [adminAnnActive, setAdminAnnActive] = useState(false);
+  const [adminAnnHasLink, setAdminAnnHasLink] = useState(false);
+  const [adminAnnLinkText, setAdminAnnLinkText] = useState('');
+  const [adminAnnLinkUrl, setAdminAnnLinkUrl] = useState('');
+  const [adminAnnHasDate, setAdminAnnHasDate] = useState(false);
+  const [adminAnnDateValue, setAdminAnnDateValue] = useState('');
 
-  // حالات الـ Analytics المدمجة حيا مع فايربيز
   const [showAdminStats, setShowAdminStats] = useState(false);
   const [statsTab, setStatsTab] = useState('lessons'); 
   const [liveOnline, setLiveOnline] = useState(1);
@@ -590,24 +768,27 @@ export default function App() {
   
   const headerRef = useRef(null);
 
+  const isVersusMode = !!(comparingStudent || versusStudents || showGroupRace);
+
   const isAdminRef = useRef(isAdmin);
   useEffect(() => {
     isAdminRef.current = isAdmin;
   }, [isAdmin]);
 
-  // جلب الإعلان عند الدخول للوحة الإدارة
   useEffect(() => {
     if (isAdmin && announcement) {
       setAdminAnnText(announcement.text || '');
       setAdminAnnActive(announcement.isActive || false);
+      setAdminAnnHasLink(announcement.hasLink || false);
+      setAdminAnnLinkText(announcement.linkText || '');
+      setAdminAnnLinkUrl(announcement.linkUrl || '');
+      setAdminAnnHasDate(announcement.hasDate || false);
+      setAdminAnnDateValue(announcement.dateValue || '');
     }
   }, [isAdmin, announcement]);
 
-  // ----------------------------------------------------------------------------------
-  // خوارزمية تسجيل تتبع الجلسات والزيارات اليومية/الأسبوعية بدقة وحماية الحصة المجانية
-  // ----------------------------------------------------------------------------------
   useEffect(() => {
-    if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
+    if (!user || !db) return; 
     
     let sessionId = sessionStorage.getItem('optima_session_id');
     if (!sessionId) {
@@ -683,7 +864,7 @@ export default function App() {
     };
 
     sendHeartbeat(); 
-    const heartbeatInterval = setInterval(sendHeartbeat, 3 * 60 * 1000); // إرسال الإشارة كل 3 دقائق فقط
+    const heartbeatInterval = setInterval(sendHeartbeat, 3 * 60 * 1000); 
 
     return () => {
       clearInterval(heartbeatInterval);
@@ -694,9 +875,6 @@ export default function App() {
     };
   }, [user, db]);
 
-  // ----------------------------------------------------------------------------------
-  // الاستماع الحي لعدد المتواجدين (متاح للجميع)
-  // ----------------------------------------------------------------------------------
   useEffect(() => {
     if (!user || !db) return;
 
@@ -715,9 +893,6 @@ export default function App() {
     return () => unsubscribeSessions();
   }, [user, db]);
 
-  // ----------------------------------------------------------------------------------
-  // الاستماع الحي للإحصائيات داخل لوحة التحكم للإدارة فقط
-  // ----------------------------------------------------------------------------------
   useEffect(() => {
     if (!user || !db) return; 
 
@@ -733,9 +908,6 @@ export default function App() {
     return () => unsubscribeCounters();
   }, [user, db]);
 
-  // ----------------------------------------------------------------------------------
-  // الاستماع لنظام الإعلانات الحي
-  // ----------------------------------------------------------------------------------
   useEffect(() => {
     if (!user || !db) return;
     const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
@@ -775,9 +947,6 @@ export default function App() {
     setShowAnnouncement(false);
   };
 
-  // ----------------------------------------------------------------------------------
-  // التحكم المباشر والدقيق في العداد الصغير على الهواتف باستخدام مراقب التمرير
-  // ----------------------------------------------------------------------------------
   useEffect(() => {
     if (isAdmin) return;
 
@@ -871,10 +1040,10 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    if (!user || !db) return; // تم إضافة حماية المصادقة قبل العمليات
+    if (!user || !db) return; 
     
-    // تم استرجاع مسار البيانات الأصلي (v2) ليقرأ بيانات تلاميذك الحقيقية
-    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
+    // الترقية إلى v3 لضمان البداية الفعلية ولائحة جديدة كلياً
+    const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3');
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         if (!isAdminRef.current) {
@@ -928,7 +1097,7 @@ export default function App() {
          isEmpty: true,
          name: 'Non défini',
          rank: r,
-         progress: LESSONS.reduce((acc, l) => ({...acc, [l.id]: 0}), {}),
+         progress: LESSONS.reduce((acc, l) => ({...acc, [l.id]: {}}), {}),
          trend: 0,
          recentProgress: 0
       };
@@ -1028,17 +1197,21 @@ export default function App() {
     setStudents(updatedStudents);
 
     if (user && db) {
-      // تم استرجاع مسار البيانات الأصلي (v2) لحفظ النقاط الحقيقية
-      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v2');
+      // الترقية إلى v3
+      const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3');
       const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
       
       try {
         await setDoc(docRef, { students: updatedStudents });
         
-        // حفظ الإعلان دفعة واحدة مع حفظ بقية البيانات
         await setDoc(annRef, {
           text: adminAnnText,
           isActive: adminAnnActive,
+          hasLink: adminAnnHasLink,
+          linkText: adminAnnLinkText,
+          linkUrl: adminAnnLinkUrl,
+          hasDate: adminAnnHasDate,
+          dateValue: adminAnnDateValue,
           id: Date.now().toString() 
         });
       } catch (e) {
@@ -1060,23 +1233,29 @@ export default function App() {
     setShowCancelConfirm(false); 
   };
 
-  const updateProgress = (studentId, lessonId, newValue, max) => {
-    let validValue = Math.max(0, Math.min(newValue, max));
-    
-    const updatedStudents = students.map(student => {
-      if (student.id === studentId) {
+  const toggleExercise = (studentId, lessonId, exNumber) => {
+    setStudents(prev => prev.map(s => {
+      if (s.id === studentId) {
+        let currentProg = s.progress[lessonId];
+        if (typeof currentProg !== 'object' || currentProg === null) {
+          currentProg = {};
+        }
+        const currentStatus = currentProg[exNumber] || 0;
+        const nextStatus = (currentStatus + 1) % 4; 
+
         return {
-          ...student,
+          ...s,
           progress: {
-            ...student.progress,
-            [lessonId]: validValue
+            ...s.progress,
+            [lessonId]: {
+              ...currentProg,
+              [exNumber]: nextStatus
+            }
           }
         };
       }
-      return student;
-    });
-
-    setStudents(updatedStudents);
+      return s;
+    }));
   };
 
   const updateStudentName = (studentId, newName) => {
@@ -1106,12 +1285,11 @@ export default function App() {
     setExpandedId(null); 
   };
 
-  // حساب إحصائيات الدروس للإدارة مرتبة حسب النسبة المئوية للنجاح
   const lessonStats = useMemo(() => {
     if (!students.length) return [];
     
     return LESSONS.map(lesson => {
-      const totalExercisesDone = students.reduce((acc, student) => acc + (student.progress[lesson.id] || 0), 0);
+      const totalExercisesDone = students.reduce((acc, student) => acc + getLessonScore(student.progress, lesson.id), 0);
       const maxPossibleExercises = students.length * lesson.total;
       const percentage = maxPossibleExercises > 0 ? (totalExercisesDone / maxPossibleExercises) * 100 : 0;
       
@@ -1123,11 +1301,6 @@ export default function App() {
       };
     }).sort((a, b) => b.percentage - a.percentage); 
   }, [students]);
-
-  const isVersusMode = comparingStudent || versusStudents !== null;
-  const isComp1 = comparingStudent && podiumSpots[0] && comparingStudent.id === podiumSpots[0].id;
-  const isComp2 = comparingStudent && podiumSpots[1] && comparingStudent.id === podiumSpots[1].id;
-  const isComp3 = comparingStudent && podiumSpots[2] && comparingStudent.id === podiumSpots[2].id;
 
   if (isAdmin) {
     return (
@@ -1156,7 +1329,6 @@ export default function App() {
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-        {/* نافذة الإحصائيات للإدارة (Dashboard) */}
         {showAdminStats && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[150] p-4 animate-fade-in" onClick={() => setShowAdminStats(false)}>
             <div className="bg-gray-50 rounded-3xl w-full max-w-md h-[85vh] shadow-2xl relative flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
@@ -1189,7 +1361,6 @@ export default function App() {
 
               <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
                 
-                {/* تبويب الدروس */}
                 {statsTab === 'lessons' && (
                   <div className="space-y-3">
                     {lessonStats.map((lesson, index) => (
@@ -1221,7 +1392,6 @@ export default function App() {
                   </div>
                 )}
 
-                {/* تبويب الزوار المربوط حيا بقاعدة البيانات فايربيز */}
                 {statsTab === 'visitors' && (
                   <div className="space-y-4">
                     <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 text-white shadow-lg relative overflow-hidden">
@@ -1355,7 +1525,7 @@ export default function App() {
               </button>
             </div>
 
-            {/* نظام إدارة الإعلانات */}
+            {/* نظام إدارة الإعلانات المتقدم */}
             <div className="bg-purple-50 rounded-2xl p-4 mb-4 border border-purple-100">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-bold text-purple-800 flex items-center gap-2">
@@ -1372,6 +1542,39 @@ export default function App() {
                 placeholder="Écrivez votre message ici..."
                 className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none"
               ></textarea>
+              
+              <div className="mt-3 space-y-3">
+                 {/* Date Toggle */}
+                 <div className="flex flex-col gap-2 bg-white p-3 rounded-xl border border-purple-100">
+                   <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-700"><i className="fa-regular fa-calendar text-purple-500 mr-1"></i> Date spécifique</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" checked={adminAnnHasDate} onChange={(e) => setAdminAnnHasDate(e.target.checked)} />
+                        <div className="w-7 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-500"></div>
+                      </label>
+                   </div>
+                   {adminAnnHasDate && (
+                      <input type="date" value={adminAnnDateValue} onChange={e => setAdminAnnDateValue(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />
+                   )}
+                 </div>
+
+                 {/* Link Toggle */}
+                 <div className="flex flex-col gap-2 bg-white p-3 rounded-xl border border-purple-100">
+                   <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-gray-700"><i className="fa-solid fa-link text-purple-500 mr-1"></i> Bouton d'action (Lien)</span>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" className="sr-only peer" checked={adminAnnHasLink} onChange={(e) => setAdminAnnHasLink(e.target.checked)} />
+                        <div className="w-7 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-500"></div>
+                      </label>
+                   </div>
+                   {adminAnnHasLink && (
+                      <div className="flex flex-col gap-2 mt-1">
+                         <input type="text" placeholder="Texte du bouton (ex: Ouvrir PDF)" value={adminAnnLinkText} onChange={e => setAdminAnnLinkText(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />
+                         <input type="url" placeholder="URL du lien (https://...)" value={adminAnnLinkUrl} onChange={e => setAdminAnnLinkUrl(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />
+                      </div>
+                   )}
+                 </div>
+              </div>
             </div>
 
             <div className="flex gap-2 relative">
@@ -1425,7 +1628,10 @@ export default function App() {
                     
                     <div 
                       className="p-4 flex items-center justify-between cursor-pointer active:bg-gray-50"
-                      onClick={() => setAdminExpandedId(isExpanded ? null : student.id)}
+                      onClick={() => {
+                         setAdminExpandedId(isExpanded ? null : student.id);
+                         setAdminActiveLesson(null); 
+                      }}
                     >
                       <div className="flex-1 mr-4 flex items-center min-w-0">
                         <div className="flex items-center justify-center w-7 h-7 rounded-md bg-gray-50 border border-gray-200 text-gray-500 font-bold text-xs mr-3 shadow-sm shrink-0" style={{ fontFamily: "'Lato', sans-serif" }}>
@@ -1442,7 +1648,7 @@ export default function App() {
                           />
                           <div className="flex items-center gap-2 mt-1">
                             <span className={`text-xs font-bold ${getScoreColorText(total)}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                              {total}/94 Ex
+                              {total}/94 Ex (Validés)
                             </span>
                             <span className="text-gray-300 text-xs">•</span>
                             <span className="text-xs font-bold text-yellow-500" style={{ fontFamily: "'Lato', sans-serif" }}>
@@ -1458,62 +1664,69 @@ export default function App() {
 
                     <div className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out bg-gray-50/50 ${isExpanded ? 'grid-rows-[1fr] opacity-100 border-t border-purple-100' : 'grid-rows-[0fr] opacity-0'}`}>
                       <div className="overflow-hidden">
-                        <div className="p-4 space-y-4">
+                        <div className="p-3 space-y-2">
+                          
                           {LESSONS.map(lesson => {
-                            const currentScore = student.progress[lesson.id] || 0;
-                            const isMax = currentScore === lesson.total;
+                            const isLessonExp = adminActiveLesson === `${student.id}-${lesson.id}`;
+                            const correctScore = getLessonScore(student.progress, lesson.id);
 
                             return (
-                              <div key={`edit-${lesson.id}`} className="bg-white border border-gray-100 p-3 rounded-xl shadow-sm">
-                                <div className="flex justify-between items-center mb-3">
-                                  <span className="text-xs font-bold text-gray-700 flex items-center">
-                                    <span className="mr-2 opacity-80">{lesson.icon}</span> 
+                              <div key={lesson.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+                                <div 
+                                  onClick={() => setAdminActiveLesson(isLessonExp ? null : `${student.id}-${lesson.id}`)} 
+                                  className="p-3 flex justify-between items-center cursor-pointer active:bg-gray-50 hover:bg-gray-50/50 transition-colors"
+                                >
+                                  <span className="text-[11px] font-bold text-gray-700 flex items-center gap-2">
+                                    <span className="text-sm">{lesson.icon}</span> 
                                     {lesson.name}
                                   </span>
-                                  <span className={`text-xs font-bold px-2 py-0.5 rounded-md ${isMax ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
-                                    {currentScore} / {lesson.total}
-                                  </span>
-                                </div>
-                                
-                                <div className="flex items-center gap-2">
-                                  <button 
-                                    onClick={() => updateProgress(student.id, lesson.id, currentScore - 1, lesson.total)}
-                                    disabled={currentScore <= 0}
-                                    className="w-10 h-10 rounded-lg bg-red-50 text-red-500 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed active:bg-red-100 transition-colors"
-                                  >
-                                    <i className="fa-solid fa-minus text-lg"></i>
-                                  </button>
-                                  
-                                  <div className="flex-1 relative">
-                                    <input 
-                                      type="number" 
-                                      value={currentScore === 0 ? '' : currentScore}
-                                      onChange={(e) => updateProgress(student.id, lesson.id, parseInt(e.target.value) || 0, lesson.total)}
-                                      placeholder="0"
-                                      className="w-full h-10 bg-gray-50 border border-gray-200 rounded-lg text-center font-bold text-gray-800 focus:outline-none focus:border-purple-400 focus:ring-1 focus:ring-purple-400"
-                                      style={{ fontFamily: "'Lato', sans-serif" }}
-                                    />
+                                  <div className="flex items-center gap-3">
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${correctScore === lesson.total ? 'bg-green-100 text-green-700' : 'bg-purple-50 text-purple-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+                                      {correctScore} / {lesson.total}
+                                    </span>
+                                    <i className={`fa-solid fa-chevron-down text-gray-400 text-xs transition-transform ${isLessonExp ? 'rotate-180' : ''}`}></i>
                                   </div>
-
-                                  <button 
-                                    onClick={() => updateProgress(student.id, lesson.id, currentScore + 1, lesson.total)}
-                                    disabled={isMax}
-                                    className="w-10 h-10 rounded-lg bg-green-50 text-green-600 flex items-center justify-center disabled:opacity-30 disabled:cursor-not-allowed active:bg-green-100 transition-colors"
-                                  >
-                                    <i className="fa-solid fa-plus text-lg"></i>
-                                  </button>
-
-                                  <button 
-                                    onClick={() => updateProgress(student.id, lesson.id, lesson.total, lesson.total)}
-                                    disabled={isMax}
-                                    className="h-10 px-3 rounded-lg bg-yellow-50 text-yellow-600 font-bold text-xs flex items-center gap-1 disabled:opacity-30 disabled:cursor-not-allowed active:bg-yellow-100 transition-colors"
-                                  >
-                                    <i className="fa-solid fa-star"></i> Max
-                                  </button>
                                 </div>
+
+                                {isLessonExp && (
+                                  <div className="p-3 border-t border-gray-100 bg-gray-50/30 grid grid-cols-4 sm:grid-cols-5 gap-2">
+                                    {Array.from({ length: lesson.total }).map((_, i) => {
+                                      const exNum = i + 1;
+                                      let currentProg = student.progress[lesson.id];
+                                      if (typeof currentProg !== 'object' || currentProg === null) currentProg = {};
+                                      const currentStatus = currentProg[exNum] || 0;
+                                      
+                                      let iconClass = "fa-regular fa-circle text-gray-300";
+                                      let bgBtnClass = "bg-white border-gray-200";
+                                      
+                                      if (currentStatus === 1) { 
+                                        iconClass = "fa-solid fa-circle-check text-green-500"; 
+                                        bgBtnClass = "bg-green-50 border-green-200"; 
+                                      } else if (currentStatus === 2) { 
+                                        iconClass = "fa-solid fa-circle-minus text-blue-500"; 
+                                        bgBtnClass = "bg-blue-50 border-blue-200"; 
+                                      } else if (currentStatus === 3) { 
+                                        iconClass = "fa-solid fa-circle-xmark text-red-500"; 
+                                        bgBtnClass = "bg-red-50 border-red-200"; 
+                                      }
+
+                                      return (
+                                        <button 
+                                          key={exNum}
+                                          onClick={() => toggleExercise(student.id, lesson.id, exNum)}
+                                          className={`flex flex-col items-center justify-center p-2.5 rounded-xl border shadow-sm transition-transform active:scale-90 hover:shadow-md ${bgBtnClass}`}
+                                        >
+                                          <span className="text-xs font-black text-gray-600 mb-1.5 uppercase tracking-wide" style={{ fontFamily: "'Lato', sans-serif" }}>Ex {exNum}</span>
+                                          <i className={`${iconClass} text-lg drop-shadow-sm`}></i>
+                                        </button>
+                                      );
+                                    })}
+                                  </div>
+                                )}
                               </div>
                             );
                           })}
+
                         </div>
                       </div>
                     </div>
@@ -1586,7 +1799,7 @@ export default function App() {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Bitcount&family=Lato:wght@500;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
 
-      {/* نافذة الإعلانات العامة (Public Announcement Modal) */}
+      {/* نافذة الإعلانات العامة مع الميزات الجديدة */}
       {showAnnouncement && announcement && announcement.isActive && !isAdmin && !isLoading && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fade-in">
           <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] animate-float-modal">
@@ -1596,24 +1809,44 @@ export default function App() {
               <div className="flex items-center justify-center gap-3 mb-5">
                 <h2 className="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x">Annonce</h2>
               </div>
+
+              {announcement.hasDate && announcement.dateValue && (
+                <div className="mb-4 flex justify-center">
+                  <div className="bg-purple-100 text-purple-700 px-4 py-1.5 rounded-full font-bold text-xs flex items-center gap-2 border border-purple-200 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
+                     <i className="fa-regular fa-calendar-check text-sm"></i> 
+                     {new Date(announcement.dateValue).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                  </div>
+                </div>
+              )}
               
-              <div className="bg-purple-50/80 rounded-2xl p-4 mb-5 border border-purple-100 shadow-sm">
+              <div className="bg-purple-50/80 rounded-2xl p-4 mb-6 border border-purple-100 shadow-sm">
                  <p className="text-sm text-purple-900 leading-relaxed whitespace-pre-wrap font-medium italic">
                    {announcement.text}
                  </p>
               </div>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
+                {announcement.hasLink && announcement.linkUrl && (
+                  <a 
+                    href={announcement.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={handleDismissAnnouncement} 
+                    className="w-full py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-gradient-x text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity flex justify-center items-center gap-2 active:scale-95"
+                  >
+                    {announcement.linkText || 'Ouvrir le lien'} <i className="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                  </a>
+                )}
                 <button 
                   onClick={handleDismissAnnouncement}
-                  className="w-full py-3.5 bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity active:scale-95"
+                  className={`w-full py-3.5 rounded-xl font-bold text-sm transition-opacity active:scale-95 flex justify-center items-center ${announcement.hasLink ? 'bg-purple-50 text-purple-600 border border-purple-100 hover:bg-purple-100' : 'bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x text-white shadow-md shadow-purple-500/30 hover:opacity-90'}`}
                 >
-                  C'est compris
+                  {announcement.hasLink ? 'Fermer' : "C'est compris"}
                 </button>
                 
                 <button 
                   onClick={handleDontShowAgain}
-                  className="text-xs text-gray-400 hover:text-purple-600 transition-colors mt-1 underline underline-offset-4 decoration-gray-300 hover:decoration-purple-400"
+                  className="text-xs text-gray-400 hover:text-purple-600 transition-colors mt-2 underline underline-offset-4 decoration-gray-300 hover:decoration-purple-400"
                 >
                   Ne plus afficher cette annonce
                 </button>
@@ -1623,6 +1856,7 @@ export default function App() {
         </div>
       )}
 
+      <GroupRaceModal isOpen={showGroupRace} students={students} onClose={() => setShowGroupRace(false)} />
       <VersusModal students={versusStudents} onClose={() => setVersusStudents(null)} />
 
       <div className={`fixed inset-0 z-[100] bg-[#fafafa] flex flex-col items-center justify-center transition-opacity duration-700 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
@@ -1683,6 +1917,7 @@ export default function App() {
         </div>
       )}
 
+      {}
       <div ref={headerRef} className="max-w-md mx-auto px-4 pt-3 pb-0">
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
           <div className="flex flex-col items-center justify-center text-center mb-4">
@@ -1746,8 +1981,21 @@ export default function App() {
 
       <div className="sticky top-0 h-[100dvh] flex flex-col max-w-md mx-auto z-30">
         
+        {}
         <div className={`shrink-0 pt-3 pb-3 px-4 relative z-40 transition-colors duration-500 ${isVersusMode ? 'bg-red-50' : 'bg-purple-50'}`}>
           <div className={`bg-white rounded-3xl p-4 shadow-sm border relative transition-colors duration-500 ${comparingStudent ? 'border-red-200' : 'border-gray-100'}`}>
+            
+            {/* زر سباق المجموعات 🏁 في الوسط وفي الأعلى بشكل بارز ومتدفق */}
+            <div className="flex justify-center w-full relative z-30 mb-2 mt-1">
+               <button 
+                 onClick={() => setShowGroupRace(true)}
+                 className="bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 animate-gradient-x text-white hover:opacity-90 px-6 py-2.5 rounded-2xl font-bold text-xs md:text-sm flex items-center gap-2.5 shadow-[0_8px_20px_rgba(239,68,68,0.35)] border border-white/20 transition-transform active:scale-95"
+                 title="Voir la course des groupes"
+               >
+                 <i className="fa-solid fa-flag-checkered text-base animate-pulse"></i> Bataille des Groupes
+               </button>
+            </div>
+
             {podiumSpots.length > 0 && (
               <>
                 <div className="flex justify-center items-end h-[330px] pt-12 relative">
@@ -1765,13 +2013,13 @@ export default function App() {
                   {/* Rang 2 */}
                   {podiumSpots[1] && (
                   <div 
-                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[1].id ? 'scale-105' : ''} ${isComp2 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
-                    onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) handleCardClick(podiumSpots[1], expandedId === podiumSpots[1].id) }}
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 cursor-pointer ${expandedId === podiumSpots[1].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) handleCardClick(podiumSpots[1], expandedId === podiumSpots[1].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? <PodiumMedal rank={podiumSpots[1].rank} defaultIcon="fa-solid fa-medal text-2xl text-slate-400" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
                     </div>
-                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[1].name)}</div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[1].isTie || podiumSpots[1].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[1])}</div>
                   {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) ? (
                     <>
                       <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
@@ -1807,9 +2055,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-28 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[1].id ? 'bg-[#059669]' : 'bg-gradient-to-t from-[#10b981] to-[#34d399]'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        {isComp2 ? <i className="fa-solid fa-lock text-xl"></i> : <span>{podiumSpots[1].rank}</span>}
-                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
-                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty && !isComp2) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
+                        <span>{podiumSpots[1].rank}</span>
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend > 0 && <span className="text-[12px] text-green-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[1].trend}</span>}
+                        {(!podiumSpots[1].isTie && !podiumSpots[1].isEmpty) && podiumSpots[1].trend < 0 && <span className="text-[12px] text-red-100 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[1].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1819,13 +2067,13 @@ export default function App() {
                   {/* Rang 1 */}
                   {podiumSpots[0] && (
                   <div 
-                    className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 mx-[-4px] ${(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[0].id ? 'scale-105' : ''} ${isComp1 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
-                    onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) handleCardClick(podiumSpots[0], expandedId === podiumSpots[0].id) }}
+                    className={`w-[110px] flex flex-col items-center z-10 transition-transform duration-200 mx-[-4px] cursor-pointer ${expandedId === podiumSpots[0].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) handleCardClick(podiumSpots[0], expandedId === podiumSpots[0].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? <PodiumMedal rank={podiumSpots[0].rank} defaultIcon="fa-solid fa-trophy text-3xl text-yellow-500" /> : <i className="fa-solid fa-trophy text-3xl text-purple-200/50 drop-shadow-sm"></i>}
                     </div>
-                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[0].name)}</div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[0].isTie || podiumSpots[0].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[0])}</div>
                   {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) ? (
                     <>
                       <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
@@ -1861,9 +2109,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-36 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-3xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[0].id ? 'bg-purple-900' : 'bg-gradient-to-t from-purple-600 to-purple-500'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        {isComp1 ? <i className="fa-solid fa-lock text-2xl"></i> : <span>{podiumSpots[0].rank}</span>}
-                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
-                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty && !isComp1) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
+                        <span>{podiumSpots[0].rank}</span>
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend > 0 && <span className="text-[14px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[0].trend}</span>}
+                        {(!podiumSpots[0].isTie && !podiumSpots[0].isEmpty) && podiumSpots[0].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[0].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1873,13 +2121,13 @@ export default function App() {
                   {/* Rang 3 */}
                   {podiumSpots[2] && (
                   <div 
-                    className={`w-24 flex flex-col items-center transition-transform duration-200 ${(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) ? 'cursor-pointer active:scale-95' : ''} ${expandedId === podiumSpots[2].id ? 'scale-105' : ''} ${isComp3 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
-                    onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) handleCardClick(podiumSpots[2], expandedId === podiumSpots[2].id) }}
+                    className={`w-24 flex flex-col items-center transition-transform duration-200 cursor-pointer ${expandedId === podiumSpots[2].id ? 'scale-105' : ''}`}
+                    onClick={() => { if(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) handleCardClick(podiumSpots[2], expandedId === podiumSpots[2].id) }}
                   >
                     <div className="mb-1">
                       {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? <PodiumMedal rank={podiumSpots[2].rank} defaultIcon="fa-solid fa-medal text-2xl text-amber-600" /> : <i className="fa-solid fa-medal text-2xl text-slate-200"></i>}
                     </div>
-                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[2].name)}</div>
+                    <div className={`text-sm w-full text-center px-1 leading-tight ${(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'text-gray-400 font-normal whitespace-nowrap' : 'text-gray-800 font-bold'}`}>{(podiumSpots[2].isTie || podiumSpots[2].isEmpty) ? 'Non défini' : renderPodiumName(podiumSpots[2])}</div>
                   {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) ? (
                     <>
                       <div className="flex items-center justify-center gap-1.5 mb-1 mt-1 w-full px-1">
@@ -1915,9 +2163,9 @@ export default function App() {
                   ) : <div className="h-[46px] w-full"></div>}
                   <div className={`w-full h-24 rounded-t-xl flex items-start justify-center pt-3 text-white font-black text-2xl relative overflow-hidden transition-colors ${expandedId === podiumSpots[2].id ? 'bg-[#c72d3d]' : 'bg-gradient-to-t from-[#e83e4e] to-[#ee6976]'}`}>
                       <div className="flex items-center gap-1 z-10">
-                        {isComp3 ? <i className="fa-solid fa-lock text-xl"></i> : <span>{podiumSpots[2].rank}</span>}
-                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
-                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty && !isComp3) && podiumSpots[2].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
+                        <span>{podiumSpots[2].rank}</span>
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend > 0 && <span className="text-[12px] text-green-300 flex items-center gap-0.5"><i className="fa-solid fa-caret-up"></i> {podiumSpots[2].trend}</span>}
+                        {(!podiumSpots[2].isTie && !podiumSpots[2].isEmpty) && podiumSpots[2].trend < 0 && <span className="text-[14px] text-red-200 flex items-center gap-0.5"><i className="fa-solid fa-caret-down"></i> {Math.abs(podiumSpots[2].trend)}</span>}
                       </div>
                       <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
                     </div>
@@ -1955,7 +2203,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* لائحة الترتيب العامة للقسم */}
+        {}
         <div className={`flex-1 flex flex-col px-4 pb-4 min-h-0 transition-colors duration-500 ${isVersusMode ? 'bg-red-50' : 'bg-purple-50'}`}>
           <div className={`bg-white rounded-3xl py-4 flex-1 flex flex-col min-h-0 overflow-hidden transition-all duration-500 ${comparingStudent ? 'border-2 border-red-500 shadow-lg shadow-red-500/20' : 'shadow-sm border border-gray-100'}`}>
             <div 
@@ -2022,7 +2270,10 @@ export default function App() {
                             {isCurrentlyComparing ? <i className="fa-solid fa-lock text-xs"></i> : student.rank}
                           </div>
                           <div className="flex-1 min-w-0 flex flex-col items-start text-left">
-                            <h3 className={`${nameClass} truncate w-full`} title={student.name}>{student.name}</h3>
+                            <h3 className={`${nameClass} truncate w-full flex items-center gap-2`} title={student.name}>
+                              <span className="truncate">{student.name}</span>
+                              <GroupBadge group={student.group} />
+                            </h3>
                             
                             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                               {student.trend > 0 && (
