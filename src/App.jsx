@@ -16,53 +16,49 @@ const LESSONS = [
 
 const now = Date.now();
 
-// دالة لتوليد كائن إنجازات فارغ لكل تلميذ
-const p = () => ({ eq: {}, vec: {}, geo: {}, sys: {}, fon: {}, sta: {}, esp: {} });
-
-// اللائحة الحقيقية والصحيحة جاهزة للانطلاق الفعلي
+// الداتا المجهزة - مصفّرة تماما للانطلاق الفعلي
 const INITIAL_STUDENTS = [
-  { id: 1, name: 'Ait El Fatmi Ghali', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 2, name: 'Ouzagmouz Saad', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 3, name: 'Bouchehab Mohamed', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 4, name: 'Ifkirne Hasna', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 5, name: 'Moussaoui Idriss', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 6, name: 'Bourazza Aya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 7, name: 'Njibi Sara', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 8, name: 'Bouchfira Roumayssae', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 9, name: 'Ait Izzi Yahya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 10, name: 'Azzab Yahya', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 11, name: 'Benaktibe Elarabi', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 12, name: 'Hassan Hajar', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 13, name: 'Rabihi Aymane', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 14, name: 'Nidali Reda', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 15, name: 'Kaarir Aouyes', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 16, name: 'Kamarat Israae', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 17, name: 'Hamdy Fatima Ezzahra', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 18, name: 'Aidi Yahia', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 19, name: 'Ifkirne Amina', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 20, name: 'Yahya Elhmidi', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  { id: 21, name: 'Ait El Kayass Amira', group: 'A', trend: 0, recentProgress: 0, progress: p() },
-  
-  { id: 22, name: 'Lahbal Badr', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 23, name: 'Touil Zakaria', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 24, name: 'Magder Rayane', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 25, name: 'Idyhya Rayan', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 26, name: 'Khalal Mohsine', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 27, name: 'Magder Inas', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 28, name: 'Sfar Meriam', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 29, name: 'Belhouria Ali', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 30, name: 'Sas Lina', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 31, name: 'Benaid Maissaa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 32, name: 'Magri Jihane', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 33, name: 'Lamlioui Adam', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 34, name: 'Belkarkour Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 35, name: 'Bouchrahil Farah', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 36, name: 'Boussal Khadija', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 37, name: 'El Amrani Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 38, name: 'Elmouhtakir Amine', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 39, name: 'Ouassou Zainab', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 40, name: 'Eljoudi Abdennour', group: 'B', trend: 0, recentProgress: 0, progress: p() },
-  { id: 41, name: 'El Abassi Larbi', group: 'B', trend: 0, recentProgress: 0, progress: p() }
+  { id: 1, name: 'Ait El Fatmi Ghali', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 2, name: 'Ouzagmouz Saad', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 3, name: 'Bouchehab Mohamed', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 4, name: 'Ifkirne Hasna', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 5, name: 'Moussaoui Idriss', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 6, name: 'Bourazza Aya', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 7, name: 'Njibi Sara', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 8, name: 'Bouchfira Roumayssae', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 9, name: 'Ait Izzi Yahya', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 10, name: 'Azzab Yahya', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 11, name: 'Benaktibe Elarabi', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 12, name: 'Hassan Hajar', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 13, name: 'Rabihi Aymane', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 14, name: 'Nidali Reda', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 15, name: 'Kaarir Aouyes', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 16, name: 'Kamarat Israae', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 17, name: 'Hamdy Fatima Ezzahra', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 18, name: 'Aidi Yahia', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 19, name: 'Ifkirne Amina', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 20, name: 'Yahya Elhmidi', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 21, name: 'Ait El Kayass Amira', group: 'A', trend: 0, recentProgress: 0, progress: {} },
+  { id: 22, name: 'Lahbal Badr', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 23, name: 'Touil Zakaria', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 24, name: 'Magder Rayane', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 25, name: 'Idyhya Rayan', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 26, name: 'Khalal Mohsine', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 27, name: 'Magder Inas', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 28, name: 'Sfar Meriam', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 29, name: 'Belhouria Ali', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 30, name: 'Sas Lina', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 31, name: 'Benaid Maissaa', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 32, name: 'Magri Jihane', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 33, name: 'Lamlioui Adam', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 34, name: 'Belkarkour Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 35, name: 'Bouchrahil Farah', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 36, name: 'Boussal Khadija', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 37, name: 'El Amrani Hafsa', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 38, name: 'Elmouhtakir Amine', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 39, name: 'Ouassou Zainab', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 40, name: 'Eljoudi Abdennour', group: 'B', trend: 0, recentProgress: 0, progress: {} },
+  { id: 41, name: 'El Abassi Larbi', group: 'B', trend: 0, recentProgress: 0, progress: {} }
 ];
 
 const MY_FIREBASE_CONFIG = {
@@ -142,10 +138,17 @@ const getProgressBarColor = (percentage) => {
   return 'bg-green-500';
 };
 
-const GroupBadge = ({ group }) => {
+const GroupBadge = ({ group, isList = false }) => {
   if (!group) return null;
+  if (isList) {
+    return (
+      <span className={`ml-1 text-[12px] font-black uppercase tracking-widest shrink-0 ${group === 'A' ? 'text-purple-400' : 'text-blue-400'}`} style={{ fontFamily: "'Lato', sans-serif" }}>
+        {group}
+      </span>
+    );
+  }
   return (
-    <span className="ml-1.5 px-1.5 py-0.5 bg-gray-100 text-gray-500 text-[10px] font-bold rounded uppercase tracking-widest shrink-0" style={{ fontFamily: "'Lato', sans-serif" }}>
+    <span className="ml-1.5 px-1.5 py-0.5 bg-gray-100 text-gray-400 text-[8px] font-bold rounded border border-gray-200 uppercase tracking-widest shrink-0 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
       {group}
     </span>
   );
@@ -416,24 +419,21 @@ const GroupRaceModal = ({ isOpen, students, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[120] p-4 animate-fade-in" onClick={onClose}>
-      <div className="bg-white rounded-3xl p-5 w-full max-w-sm shadow-[0_10px_40px_rgba(79,70,229,0.3)] border-2 border-indigo-500 relative flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
+      <div className="bg-white rounded-3xl p-5 w-full max-w-sm shadow-2xl relative flex flex-col max-h-[85vh]" onClick={e => e.stopPropagation()}>
         <button onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors z-10">
           <i className="fa-solid fa-xmark text-lg"></i>
         </button>
 
         <div className="text-center mb-2 mt-2 shrink-0">
-          <h2 className="text-lg font-black text-gray-800 uppercase tracking-wide flex items-center justify-center gap-2 mb-2">
-             <i className="fa-solid fa-flag-checkered text-indigo-500"></i> Bataille des Groupes
-          </h2>
           <div className="flex justify-center items-center gap-6 mt-3 mb-2">
              <div className="flex flex-col items-center">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Groupe A</span>
-                <div className="w-14 h-14 rounded-2xl bg-purple-50 border border-purple-200 flex items-center justify-center text-3xl font-black text-purple-600 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsA}</div>
+                <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-200 flex items-center justify-center text-3xl font-black text-red-500 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsA}</div>
              </div>
              <div className="text-2xl font-black text-gray-300 mt-4">VS</div>
              <div className="flex flex-col items-center">
                 <span className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Groupe B</span>
-                <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-3xl font-black text-blue-600 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsB}</div>
+                <div className="w-14 h-14 rounded-2xl bg-green-50 border border-green-200 flex items-center justify-center text-3xl font-black text-green-500 shadow-sm" style={{ fontFamily: "'Bebas Neue', sans-serif" }}>{winsB}</div>
              </div>
           </div>
         </div>
@@ -443,36 +443,28 @@ const GroupRaceModal = ({ isOpen, students, onClose }) => {
             {LESSONS.map((lesson) => {
               const a = statsA.find(s => s.id === lesson.id);
               const b = statsB.find(s => s.id === lesson.id);
-              const aWins = a.correctPct > b.correctPct;
-              const bWins = b.correctPct > a.correctPct;
               
               return (
-                <div key={lesson.id} className="bg-gray-50/50 border border-gray-200 p-3 rounded-2xl shadow-sm">
-                  <div className="text-xs font-bold text-gray-700 mb-3 flex items-center justify-center gap-1.5 pb-2 border-b border-gray-200">
-                    <span className="opacity-80">{lesson.icon}</span> {lesson.name}
+                <div key={lesson.id} className="bg-white border border-gray-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                  <div className="text-sm font-black text-gray-800 mb-3 flex items-center justify-center pb-2 border-b border-gray-100">
+                    {lesson.name}
                   </div>
                   
-                  <div className="flex flex-col gap-2">
-                    <div className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${aWins ? 'bg-green-50 border border-green-400 shadow-sm' : 'border border-transparent'}`}>
-                      <div className={`w-8 text-[11px] font-black rounded text-center py-1 shrink-0 ${aWins ? 'text-green-700 bg-green-200/50' : 'text-purple-600 bg-purple-100 shadow-sm'}`}>Gr A</div>
-                      <div className="flex-1 h-4 flex rounded-full overflow-hidden bg-gray-200 shadow-inner">
-                        <div style={{ width: `${a.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out flex items-center justify-start overflow-hidden">
-                           {a.correctPct >= 15 && <span className="text-[8px] text-white/90 font-bold ml-1.5"><i className="fa-solid fa-check"></i></span>}
-                        </div>
-                        <div style={{ width: `${a.restPct}%` }} className="h-full bg-gray-200 border-l border-white/50 transition-all duration-1000 ease-out"></div>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-3 px-1">
+                      <div className="w-5 text-sm font-black text-center shrink-0 text-red-500">A</div>
+                      <div className="flex-1 h-2 flex rounded-full bg-gray-100 shadow-inner">
+                        <div style={{ width: `${a.correctPct}%` }} className="h-full bg-red-500 transition-all duration-1000 ease-out rounded-full"></div>
                       </div>
-                      <div className={`w-9 text-right font-black text-[11px] ${aWins ? 'text-green-700' : 'text-gray-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>{a.correctPct.toFixed(0)}%</div>
+                      <div className="w-9 text-right font-black text-xs text-red-500" style={{ fontFamily: "'Lato', sans-serif" }}>{a.correctPct.toFixed(0)}%</div>
                     </div>
 
-                    <div className={`flex items-center gap-2 p-1.5 rounded-xl transition-colors ${bWins ? 'bg-green-50 border border-green-400 shadow-sm' : 'border border-transparent'}`}>
-                      <div className={`w-8 text-[11px] font-black rounded text-center py-1 shrink-0 ${bWins ? 'text-green-700 bg-green-200/50' : 'text-blue-600 bg-blue-100 shadow-sm'}`}>Gr B</div>
-                      <div className="flex-1 h-4 flex rounded-full overflow-hidden bg-gray-200 shadow-inner">
-                        <div style={{ width: `${b.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out flex items-center justify-start overflow-hidden">
-                           {b.correctPct >= 15 && <span className="text-[8px] text-white/90 font-bold ml-1.5"><i className="fa-solid fa-check"></i></span>}
-                        </div>
-                        <div style={{ width: `${b.restPct}%` }} className="h-full bg-gray-200 border-l border-white/50 transition-all duration-1000 ease-out"></div>
+                    <div className="flex items-center gap-3 px-1">
+                      <div className="w-5 text-sm font-black text-center shrink-0 text-green-500">B</div>
+                      <div className="flex-1 h-2 flex rounded-full bg-gray-100 shadow-inner">
+                        <div style={{ width: `${b.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out rounded-full"></div>
                       </div>
-                      <div className={`w-9 text-right font-black text-[11px] ${bWins ? 'text-green-700' : 'text-gray-600'}`} style={{ fontFamily: "'Lato', sans-serif" }}>{b.correctPct.toFixed(0)}%</div>
+                      <div className="w-9 text-right font-black text-xs text-green-500" style={{ fontFamily: "'Lato', sans-serif" }}>{b.correctPct.toFixed(0)}%</div>
                     </div>
                   </div>
                 </div>
@@ -1042,7 +1034,7 @@ export default function App() {
   useEffect(() => {
     if (!user || !db) return; 
     
-    // الترقية إلى v3 لضمان البداية الفعلية ولائحة جديدة كلياً
+    // Using v3 for clean real data start
     const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3');
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -1197,7 +1189,7 @@ export default function App() {
     setStudents(updatedStudents);
 
     if (user && db) {
-      // الترقية إلى v3
+      // Saving to v3 to keep clean slate
       const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'leaderboard', 'v3');
       const annRef = doc(db, 'artifacts', appId, 'public', 'data', 'announcements', 'current');
       
@@ -1802,7 +1794,7 @@ export default function App() {
       {/* نافذة الإعلانات العامة مع الميزات الجديدة */}
       {showAnnouncement && announcement && announcement.isActive && !isAdmin && !isLoading && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-[200] p-4 animate-fade-in">
-          <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-[0_20px_60px_rgba(0,0,0,0.3)] animate-float-modal">
+          <div className="p-[2px] bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x rounded-3xl w-full max-w-sm shadow-2xl">
             <div className="bg-white rounded-[22px] p-6 relative overflow-hidden text-center">
               <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-32 bg-purple-500/20 rounded-full blur-3xl -z-10"></div>
               
@@ -1811,15 +1803,83 @@ export default function App() {
               </div>
 
               {announcement.hasDate && announcement.dateValue && (
-                <div className="mb-4 flex justify-center">
-                  <div className="bg-purple-100 text-purple-700 px-4 py-1.5 rounded-full font-bold text-xs flex items-center gap-2 border border-purple-200 shadow-sm" style={{ fontFamily: "'Lato', sans-serif" }}>
-                     <i className="fa-regular fa-calendar-check text-sm"></i> 
-                     {new Date(announcement.dateValue).toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                  </div>
+                <div className="mb-6 flex justify-center">
+                  {(() => {
+                    const targetDate = new Date(announcement.dateValue);
+                    const year = targetDate.getFullYear();
+                    const month = targetDate.getMonth();
+                    const targetDay = targetDate.getDate();
+                    
+                    const today = new Date();
+                    const isCurrentMonth = today.getFullYear() === year && today.getMonth() === month;
+                    const currentDay = today.getDate();
+                    
+                    const firstDay = new Date(year, month, 1).getDay();
+                    const startDay = firstDay === 0 ? 6 : firstDay - 1; // جعل الإثنين هو أول أيام الأسبوع
+                    const daysInMonth = new Date(year, month + 1, 0).getDate();
+                    const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+                    let days = [];
+                    // إضافة أيام الشهر السابق
+                    for (let i = startDay - 1; i >= 0; i--) {
+                      days.push({ day: daysInPrevMonth - i, isCurrentMonth: false });
+                    }
+                    // أيام الشهر الحالي
+                    for (let i = 1; i <= daysInMonth; i++) {
+                      days.push({
+                        day: i,
+                        isCurrentMonth: true,
+                        isTarget: i === targetDay,
+                        isToday: isCurrentMonth && i === currentDay
+                      });
+                    }
+                    // إكمال الشبكة لأيام الشهر القادم
+                    const remaining = 42 - days.length;
+                    for (let i = 1; i <= remaining; i++) {
+                      days.push({ day: i, isCurrentMonth: false });
+                    }
+                    if (days.length > 35 && days.slice(35).every(d => !d.isCurrentMonth)) {
+                       days = days.slice(0, 35);
+                    }
+
+                    return (
+                      <div className="bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm p-5 w-64 text-left">
+                         <div className="flex items-center justify-center mb-5 px-1">
+                            <div className="font-bold text-sm text-gray-800 capitalize" style={{ fontFamily: "'Lato', sans-serif" }}>
+                               {targetDate.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+                            </div>
+                         </div>
+                         <div className="grid grid-cols-7 gap-y-3 gap-x-1 text-center mb-3">
+                           {['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'].map(day => (
+                              <span key={day} className="text-[11px] font-bold text-gray-400">{day}</span>
+                           ))}
+                         </div>
+                         <div className="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
+                           {days.map((d, idx) => {
+                              let className = "w-7 h-7 flex items-center justify-center rounded-lg text-[11px] font-bold mx-auto transition-colors ";
+                              if (!d.isCurrentMonth) {
+                                 className += "text-gray-300 ";
+                              } else if (d.isTarget) {
+                                 className += "bg-red-500 text-white shadow-md shadow-red-200 ";
+                              } else if (d.isToday) {
+                                 className += "border-2 border-purple-500 text-purple-600 bg-purple-50 ";
+                              } else {
+                                 className += "text-gray-700 hover:bg-gray-100 ";
+                              }
+                              return (
+                                 <div key={idx} className={className} style={{ fontFamily: "'Lato', sans-serif" }}>
+                                    {d.day}
+                                 </div>
+                              );
+                           })}
+                         </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
               
-              <div className="bg-purple-50/80 rounded-2xl p-4 mb-6 border border-purple-100 shadow-sm">
+              <div className="bg-purple-50/80 rounded-2xl p-4 mb-6 border-2 border-purple-500 shadow-sm">
                  <p className="text-sm text-purple-900 leading-relaxed whitespace-pre-wrap font-medium italic">
                    {announcement.text}
                  </p>
@@ -1832,14 +1892,14 @@ export default function App() {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={handleDismissAnnouncement} 
-                    className="w-full py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-gradient-x text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity flex justify-center items-center gap-2 active:scale-95"
+                    className="w-full py-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500 animate-gradient-x text-white rounded-xl font-bold text-sm shadow-md shadow-purple-500/30 hover:opacity-90 transition-opacity flex justify-center items-center gap-2 active:scale-95 animate-float-modal"
                   >
                     {announcement.linkText || 'Ouvrir le lien'} <i className="fa-solid fa-arrow-up-right-from-square text-xs"></i>
                   </a>
                 )}
                 <button 
                   onClick={handleDismissAnnouncement}
-                  className={`w-full py-3.5 rounded-xl font-bold text-sm transition-opacity active:scale-95 flex justify-center items-center ${announcement.hasLink ? 'bg-purple-50 text-purple-600 border border-purple-100 hover:bg-purple-100' : 'bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x text-white shadow-md shadow-purple-500/30 hover:opacity-90'}`}
+                  className={`w-full py-3.5 rounded-xl font-bold text-sm transition-opacity active:scale-95 flex justify-center items-center ${announcement.hasLink ? 'bg-purple-50 text-purple-600 border border-purple-100 hover:bg-purple-100' : 'bg-gradient-to-r from-purple-500 via-indigo-500 to-purple-500 animate-gradient-x text-white shadow-md shadow-purple-500/30 hover:opacity-90 animate-float-modal'}`}
                 >
                   {announcement.hasLink ? 'Fermer' : "C'est compris"}
                 </button>
@@ -1979,23 +2039,12 @@ export default function App() {
         </div>
       </div>
 
+      {}
       <div className="sticky top-0 h-[100dvh] flex flex-col max-w-md mx-auto z-30">
         
-        {}
         <div className={`shrink-0 pt-3 pb-3 px-4 relative z-40 transition-colors duration-500 ${isVersusMode ? 'bg-red-50' : 'bg-purple-50'}`}>
           <div className={`bg-white rounded-3xl p-4 shadow-sm border relative transition-colors duration-500 ${comparingStudent ? 'border-red-200' : 'border-gray-100'}`}>
             
-            {/* زر سباق المجموعات 🏁 في الوسط وفي الأعلى بشكل بارز ومتدفق */}
-            <div className="flex justify-center w-full relative z-30 mb-2 mt-1">
-               <button 
-                 onClick={() => setShowGroupRace(true)}
-                 className="bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 animate-gradient-x text-white hover:opacity-90 px-6 py-2.5 rounded-2xl font-bold text-xs md:text-sm flex items-center gap-2.5 shadow-[0_8px_20px_rgba(239,68,68,0.35)] border border-white/20 transition-transform active:scale-95"
-                 title="Voir la course des groupes"
-               >
-                 <i className="fa-solid fa-flag-checkered text-base animate-pulse"></i> Bataille des Groupes
-               </button>
-            </div>
-
             {podiumSpots.length > 0 && (
               <>
                 <div className="flex justify-center items-end h-[330px] pt-12 relative">
@@ -2173,6 +2222,17 @@ export default function App() {
                   )}
                 </div>
 
+                {/* زر سباق المجموعات 🏁 في الوسط وفي الأسفل (فوق المنصة مباشرة) */}
+                <div className="absolute bottom-4 left-0 w-full flex justify-center z-30 pointer-events-auto">
+                   <button 
+                     onClick={() => setShowGroupRace(true)}
+                     className="bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 animate-gradient-x text-white hover:opacity-90 px-6 py-2.5 rounded-2xl font-bold text-sm flex items-center gap-2.5 transition-transform active:scale-95 z-50 shadow-md"
+                     title="Voir la course des groupes"
+                   >
+                     <i className="fa-solid fa-flag-checkered text-lg animate-pulse"></i> Bataille des Groupes
+                   </button>
+                </div>
+
                 <div className="w-full relative z-50">
                   {podiumSpots.filter(s => !s.isTie && !s.isEmpty).map(student => (
                     <div 
@@ -2272,7 +2332,7 @@ export default function App() {
                           <div className="flex-1 min-w-0 flex flex-col items-start text-left">
                             <h3 className={`${nameClass} truncate w-full flex items-center gap-2`} title={student.name}>
                               <span className="truncate">{student.name}</span>
-                              <GroupBadge group={student.group} />
+                              <GroupBadge group={student.group} isList={true} />
                             </h3>
                             
                             <div className="flex items-center gap-1.5 mt-1 flex-wrap">
