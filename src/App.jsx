@@ -1385,7 +1385,19 @@ export default function App() {
     const nowTime = Date.now();
     const twoDays = 2 * 24 * 60 * 60 * 1000; 
     
+    // التحقق مما إذا تم التعديل فعلياً على تمارين أي تلميذ
+    const anyProgressChanged = students.some(student => {
+       const initialStudent = initialAdminStudents.find(s => s.id === student.id);
+       return initialStudent && JSON.stringify(student.progress) !== JSON.stringify(initialStudent.progress);
+    });
+
     const updatedStudents = students.map(student => {
+      // إذا لم يتم تعديل التمارين، نحتفظ بالمؤشرات الحالية ولا نصفرها
+      if (!anyProgressChanged) {
+         return student;
+      }
+
+      // إذا تم تعديل التمارين، نقوم بتحديث المؤشرات والأسهم بشكل طبيعي
       const oldRank = sessionStartRanks[student.id] || newRanks[student.id];
       const oldTotal = sessionStartScores[student.id] !== undefined ? sessionStartScores[student.id] : calculateTotal(student.progress);
       const newTotal = calculateTotal(student.progress);
@@ -1394,7 +1406,8 @@ export default function App() {
       let fireBadgeUntil = student.fireBadgeUntil || null;
       let lightningBadgeUntil = student.lightningBadgeUntil || null;
 
-      if (trend > 5) fireBadgeUntil = nowTime + twoDays; else if (trend < 0) fireBadgeUntil = null;
+      if (trend > 5) fireBadgeUntil = nowTime + twoDays; 
+      else if (trend < 0) fireBadgeUntil = null;
       if (recentProgress >= 10) lightningBadgeUntil = nowTime + twoDays;
 
       return { ...student, trend, recentProgress, fireBadgeUntil, lightningBadgeUntil };
@@ -1451,6 +1464,22 @@ export default function App() {
       return { ...lesson, totalExercisesDone, maxPossibleExercises, percentage };
     }).sort((a, b) => b.percentage - a.percentage); 
   }, [students]);
+
+  // دالة لعرض زر الملاحظات في المنصة
+  const renderPodiumRemarkBadge = (student) => {
+    if (!student || student.isTie || student.isEmpty) return null;
+    const sRemarks = remarksData[student.id] || [];
+    const hasRecentRemarks = sRemarks.some(r => Date.now() - r.timestamp < THREE_DAYS_MS);
+    if (!hasRecentRemarks) return null;
+    return (
+      <button 
+        onClick={(e) => { e.stopPropagation(); setViewRemarkStudent(student); }}
+        className="text-[9px] bg-orange-100 text-orange-600 border border-orange-200 px-1.5 py-[1px] rounded flex items-center gap-1 font-bold animate-pulse shadow-sm ml-0.5 hover:bg-orange-200 transition-colors z-30 relative"
+      >
+        <i className="fa-solid fa-triangle-exclamation"></i> {sRemarks.length}
+      </button>
+    );
+  };
 
   if (isAdmin) {
     return (
@@ -1965,6 +1994,7 @@ export default function App() {
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>{calculateCompletedLessons(podiumSpots[1].progress)}</span>
                           <i className="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                          {renderPodiumRemarkBadge(podiumSpots[1])}
                         </div>
                         <div className="flex items-center gap-1">
                           {podiumSpots[1].fireBadgeUntil && podiumSpots[1].fireBadgeUntil > Date.now() && <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '11px' }}></i>}
@@ -1999,6 +2029,7 @@ export default function App() {
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>{calculateCompletedLessons(podiumSpots[0].progress)}</span>
                           <i className="fa-solid fa-star text-yellow-400 text-[11px]"></i>
+                          {renderPodiumRemarkBadge(podiumSpots[0])}
                         </div>
                         <div className="flex items-center gap-1">
                           {podiumSpots[0].fireBadgeUntil && podiumSpots[0].fireBadgeUntil > Date.now() && <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '12px' }}></i>}
@@ -2033,6 +2064,7 @@ export default function App() {
                         <div className="flex items-center gap-1">
                           <span className="text-xs font-bold text-gray-600" style={{ fontFamily: "'Lato', sans-serif" }}>{calculateCompletedLessons(podiumSpots[2].progress)}</span>
                           <i className="fa-solid fa-star text-yellow-400 text-[10px]"></i>
+                          {renderPodiumRemarkBadge(podiumSpots[2])}
                         </div>
                         <div className="flex items-center gap-1">
                           {podiumSpots[2].fireBadgeUntil && podiumSpots[2].fireBadgeUntil > Date.now() && <i className="fa-solid fa-fire animate-pulse drop-shadow-sm" style={{ color: 'rgb(243, 59, 59)', fontSize: '11px' }}></i>}
