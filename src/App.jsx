@@ -772,7 +772,8 @@ const GroupRaceModal = ({ isOpen, students, onClose }) => {
       const maxPossible = group.length * lesson.total;
       let correctCount = 0;
       group.forEach(s => { correctCount += getLessonScore(s.progress, lesson.id); });
-      const correctPct = maxPossible === 0 ? 0 : (correctCount / maxPossible) * 100;
+      // استخدام Math وتقريب لفاصلة عشرية واحدة لجعل المقارنة شفافة ومطابقة لما يعرض في الواجهة
+      const correctPct = maxPossible === 0 ? 0 : Number(((correctCount / maxPossible) * 100).toFixed(1));
       return { id: lesson.id, name: lesson.name, correctPct };
     });
   };
@@ -822,14 +823,14 @@ const GroupRaceModal = ({ isOpen, students, onClose }) => {
                       <div className="flex-1 h-2 flex rounded-full bg-gray-100 shadow-inner">
                         <div style={{ width: `${a.correctPct}%` }} className="h-full bg-red-500 transition-all duration-1000 ease-out rounded-full"></div>
                       </div>
-                      <div className="w-9 text-right font-black text-xs text-red-500" style={{ fontFamily: "'Lato', sans-serif" }}>{a.correctPct.toFixed(0)}%</div>
+                      <div className="w-10 text-right font-black text-xs text-red-500" style={{ fontFamily: "'Lato', sans-serif" }}>{a.correctPct.toFixed(1)}%</div>
                     </div>
                     <div className="flex items-center gap-3 px-1">
                       <div className="w-5 text-sm font-black text-center shrink-0 text-green-500">B</div>
                       <div className="flex-1 h-2 flex rounded-full bg-gray-100 shadow-inner">
                         <div style={{ width: `${b.correctPct}%` }} className="h-full bg-green-500 transition-all duration-1000 ease-out rounded-full"></div>
                       </div>
-                      <div className="w-9 text-right font-black text-xs text-green-500" style={{ fontFamily: "'Lato', sans-serif" }}>{b.correctPct.toFixed(0)}%</div>
+                      <div className="w-10 text-right font-black text-xs text-green-500" style={{ fontFamily: "'Lato', sans-serif" }}>{b.correctPct.toFixed(1)}%</div>
                     </div>
                   </div>
                 </div>
@@ -1052,12 +1053,19 @@ export default function App() {
   const [adminAnnLinkUrl, setAdminAnnLinkUrl] = useState('');
   const [adminAnnHasDate, setAdminAnnHasDate] = useState(false);
   const [adminAnnDateValue, setAdminAnnDateValue] = useState('');
+  
+  // التحكم في ظهور وإخفاء قسم الإعلان بشكل كامل في الإدارة (التعديل الأول)
+  const [isAnnSectionOpen, setIsAnnSectionOpen] = useState(false);
 
   const [showAdminStats, setShowAdminStats] = useState(false);
   const [statsTab, setStatsTab] = useState('lessons'); 
   const [liveOnline, setLiveOnline] = useState(1);
+  
+  // تحديثات الإحصائيات (التعديل الثالث)
   const [dailyVisits, setDailyVisits] = useState(0);
   const [weeklyVisits, setWeeklyVisits] = useState(0);
+  const [dailyUnique, setDailyUnique] = useState(0);
+  const [weeklyUnique, setWeeklyUnique] = useState(0);
 
   const [initialAdminStudents, setInitialAdminStudents] = useState([]);
   const [sessionStartRanks, setSessionStartRanks] = useState({});
@@ -1089,6 +1097,7 @@ export default function App() {
     }
   }, [isAdmin, announcement]);
 
+  // تحديث دالة تسجيل الزيارات بدقة أكبر لتشمل التمييز بين (الزيارات) و (الزوار)
   useEffect(() => {
     if (!user || !db) return; 
     let sessionId = sessionStorage.getItem('optima_session_id');
@@ -1096,29 +1105,64 @@ export default function App() {
       sessionId = 'sess_' + Math.random().toString(36).substr(2, 9);
       sessionStorage.setItem('optima_session_id', sessionId);
     }
+    
     const recordVisit = async () => {
-      const visitedToday = sessionStorage.getItem('optima_visited_today');
-      if (visitedToday) return;
-      const counterRef = doc(db, 'artifacts', appId, 'public', 'data', 'analytics', 'counters');
       const todayStr = new Date().toISOString().split('T')[0];
+      
+      const d = new Date();
+      d.setUTCDate(d.getDate() + 4 - (d.getDay()||7));
+      const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      const weekNo = Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);
+      const weekStr = d.getUTCFullYear() + '-W' + weekNo;
+
+      const lastVisitDate = localStorage.getItem('optima_last_visit_date');
+      const lastVisitWeek = localStorage.getItem('optima_last_visit_week');
+      const viewedThisSession = sessionStorage.getItem('optima_viewed_this_session');
+
+      const isNewDailyVisitor = lastVisitDate !== todayStr;
+      const isNewWeeklyVisitor = lastVisitWeek !== weekStr;
+      const isNewVisit = !viewedThisSession;
+
+      // إذا لم يكن هناك زيارة جديدة أو زائر جديد، لا تفعل شيئاً
+      if (!isNewVisit && !isNewDailyVisitor && !isNewWeeklyVisitor) return;
+
+      const counterRef = doc(db, 'artifacts', appId, 'public', 'data', 'analytics', 'counters');
       try {
         await runTransaction(db, async (transaction) => {
           const sfDoc = await transaction.get(counterRef);
-          if (!sfDoc.exists()) {
-            transaction.set(counterRef, { dailyVisits: 1, weeklyVisits: 1, lastResetDate: todayStr, lastWeekResetDate: todayStr });
-          } else {
-            const data = sfDoc.data();
-            let newDaily = (data.dailyVisits || 0) + 1;
-            let newWeekly = (data.weeklyVisits || 0) + 1;
-            let updates = {};
-            if (data.lastResetDate !== todayStr) { newDaily = 1; updates.lastResetDate = todayStr; }
-            const lastWeekDate = new Date(data.lastWeekResetDate || todayStr);
-            if ((new Date() - lastWeekDate) / (1000 * 60 * 60 * 24) >= 7) { newWeekly = 1; updates.lastWeekResetDate = todayStr; }
-            updates.dailyVisits = newDaily; updates.weeklyVisits = newWeekly;
-            transaction.update(counterRef, updates);
+          let data = sfDoc.exists() ? sfDoc.data() : {};
+          
+          let updates = { ...data };
+          
+          if (data.lastResetDate !== todayStr) {
+            updates.dailyVisits = 0;
+            updates.dailyUnique = 0;
+            updates.lastResetDate = todayStr;
           }
+          if (data.lastWeekResetDate !== weekStr) {
+            updates.weeklyVisits = 0;
+            updates.weeklyUnique = 0;
+            updates.lastWeekResetDate = weekStr;
+          }
+
+          if (isNewVisit) {
+              updates.dailyVisits = (updates.dailyVisits || 0) + 1;
+              updates.weeklyVisits = (updates.weeklyVisits || 0) + 1;
+          }
+          if (isNewDailyVisitor) {
+              updates.dailyUnique = (updates.dailyUnique || 0) + 1;
+          }
+          if (isNewWeeklyVisitor) {
+              updates.weeklyUnique = (updates.weeklyUnique || 0) + 1;
+          }
+          
+          transaction.set(counterRef, updates, { merge: true });
         });
-        sessionStorage.setItem('optima_visited_today', 'true');
+        
+        if (isNewVisit) sessionStorage.setItem('optima_viewed_this_session', 'true');
+        if (isNewDailyVisitor) localStorage.setItem('optima_last_visit_date', todayStr);
+        if (isNewWeeklyVisitor) localStorage.setItem('optima_last_visit_week', weekStr);
+        
       } catch (e) { console.error("Analytics Error:", e); }
     };
     recordVisit();
@@ -1167,6 +1211,8 @@ export default function App() {
       if (docSnap.exists()) {
         setDailyVisits(docSnap.data().dailyVisits || 0);
         setWeeklyVisits(docSnap.data().weeklyVisits || 0);
+        setDailyUnique(docSnap.data().dailyUnique || 0);
+        setWeeklyUnique(docSnap.data().weeklyUnique || 0);
       }
     });
     return () => unsubscribeCounters();
@@ -1364,7 +1410,6 @@ export default function App() {
   };
 
   const handleLockClick = () => {
-    // التعديل الأول: منع محاولة الدخول إذا كانت البيانات لم تكتمل في التحميل
     if (isLoading) return; 
     
     if (localStorage.getItem('optimaAdminMode') === 'true') openAdmin();
@@ -1529,7 +1574,7 @@ export default function App() {
                   </button>
                 </div>
               </div>
-              <div className="flex-1 overflow-y-auto p-4 smooth-scroll">
+              <div className="flex-1 overflow-y-auto p-4 smooth-scroll no-scrollbar">
                 {statsTab === 'lessons' && (
                   <div className="space-y-3">
                     {lessonStats.map((lesson, index) => (
@@ -1569,16 +1614,29 @@ export default function App() {
                         <span className="text-sm text-gray-400 font-medium mb-1.5">Élèves</span>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    
+                    {/* التعديل الثالث: تحديث الإحصائيات لتشمل الزوار والزيارات */}
+                    <div className="grid grid-cols-2 gap-3 mb-3">
                       <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
-                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-calendar-day"></i></div>
-                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{dailyVisits}</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Aujourd'hui</span></div>
+                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-user-check"></i></div>
+                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{dailyUnique}</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Visiteurs (Auj.)</span></div>
                       </div>
                       <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
-                        <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-calendar-week"></i></div>
-                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{weeklyVisits}</span><span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Semaine</span></div>
+                        <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-eye"></i></div>
+                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{dailyVisits}</span><span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Vues (Auj.)</span></div>
                       </div>
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-users"></i></div>
+                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{weeklyUnique}</span><span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Visiteurs (Sem.)</span></div>
+                      </div>
+                      <div className="bg-white rounded-3xl p-5 shadow-sm border border-gray-100 flex flex-col justify-between">
+                        <div className="w-10 h-10 rounded-full bg-purple-50 text-purple-500 flex items-center justify-center text-lg mb-3"><i className="fa-solid fa-chart-line"></i></div>
+                        <div><span className="block text-2xl font-black text-gray-800" style={{ fontFamily: "'Lato', sans-serif" }}>{weeklyVisits}</span><span className="text-[10px] font-bold text-gray-400 tracking-wider uppercase">Vues (Sem.)</span></div>
+                      </div>
+                    </div>
+                    
                   </div>
                 )}
               </div>
@@ -1630,18 +1688,21 @@ export default function App() {
               </div>
             </div>
 
-            {/* Collapsible Annonce */}
+            {/* Collapsible Annonce (التعديل الأول والثاني: طي قسم الإعلانات وإصلاح الخلفية) */}
             <div className="bg-purple-50 rounded-2xl p-4 mb-4 border border-purple-100">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between cursor-pointer" onClick={() => setIsAnnSectionOpen(!isAnnSectionOpen)}>
                 <h3 className="text-sm font-bold text-purple-800 flex items-center gap-2"><i className="fa-solid fa-bullhorn"></i> Annonce Publique</h3>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" checked={adminAnnActive} onChange={(e) => setAdminAnnActive(e.target.checked)} />
-                  <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
-                </label>
+                <div className="flex items-center gap-3">
+                  <label className="relative inline-flex items-center cursor-pointer" onClick={e => e.stopPropagation()}>
+                    <input type="checkbox" className="sr-only peer" checked={adminAnnActive} onChange={(e) => setAdminAnnActive(e.target.checked)} />
+                    <div className="w-9 h-5 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-purple-500"></div>
+                  </label>
+                  <i className={`fa-solid fa-chevron-down text-purple-400 transition-transform ${isAnnSectionOpen ? 'rotate-180' : ''}`}></i>
+                </div>
               </div>
-              {adminAnnActive && (
-                <div className="mt-3 animate-fade-in">
-                  <textarea value={adminAnnText} onChange={(e) => setAdminAnnText(e.target.value)} placeholder="Écrivez votre message ici..." className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none"></textarea>
+              {isAnnSectionOpen && (
+                <div className="mt-4 animate-fade-in border-t border-purple-200/50 pt-4">
+                  <textarea value={adminAnnText} onChange={(e) => setAdminAnnText(e.target.value)} placeholder="Écrivez votre message ici..." className="w-full h-20 px-3 py-2 rounded-xl border border-purple-200 bg-white text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-300 mb-2 resize-none" style={{ colorScheme: 'light' }}></textarea>
                   <div className="space-y-3">
                      <div className="flex flex-col gap-2 bg-white p-3 rounded-xl border border-purple-100">
                        <div className="flex items-center justify-between">
@@ -1651,7 +1712,7 @@ export default function App() {
                             <div className="w-7 h-4 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-500"></div>
                           </label>
                        </div>
-                       {adminAnnHasDate && <input type="date" value={adminAnnDateValue} onChange={e => setAdminAnnDateValue(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />}
+                       {adminAnnHasDate && <input type="date" value={adminAnnDateValue} onChange={e => setAdminAnnDateValue(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 bg-white text-gray-800" style={{ colorScheme: 'light' }} />}
                      </div>
                      <div className="flex flex-col gap-2 bg-white p-3 rounded-xl border border-purple-100">
                        <div className="flex items-center justify-between">
@@ -1663,8 +1724,8 @@ export default function App() {
                        </div>
                        {adminAnnHasLink && (
                           <div className="flex flex-col gap-2 mt-1">
-                             <input type="text" placeholder="Texte du bouton" value={adminAnnLinkText} onChange={e => setAdminAnnLinkText(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />
-                             <input type="url" placeholder="URL du lien" value={adminAnnLinkUrl} onChange={e => setAdminAnnLinkUrl(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 text-gray-700" />
+                             <input type="text" placeholder="Texte du bouton" value={adminAnnLinkText} onChange={e => setAdminAnnLinkText(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 bg-white text-gray-800" style={{ colorScheme: 'light' }} />
+                             <input type="url" placeholder="URL du lien" value={adminAnnLinkUrl} onChange={e => setAdminAnnLinkUrl(e.target.value)} className="w-full text-xs p-2 border border-gray-200 rounded-lg outline-none focus:border-purple-300 bg-white text-gray-800" style={{ colorScheme: 'light' }} />
                           </div>
                        )}
                      </div>
